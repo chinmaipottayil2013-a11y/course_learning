@@ -5,14 +5,12 @@ import 'package:http/http.dart' as http;
 import 'package:learning_course2/core/constants/api_constants.dart';
 import 'package:learning_course2/core/constants/string_constants.dart';
 import 'package:learning_course2/models/cart_model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class CartService {
   Future<CartModel> getCourses(int regionId) async {
     final uri = Uri.parse(
       ApiConstants.cartUrl,
     ).replace(queryParameters: {'region_id': regionId.toString()});
-    final prefs = await SharedPreferences.getInstance();
 
     final response = await http.get(
       uri,
