@@ -17,6 +17,10 @@ class ListWid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isAdded = context.watch<CartProvider>().isAlreadyAdded(
+      courseModel.id,
+    );
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
 
@@ -68,14 +72,28 @@ class ListWid extends StatelessWidget {
           ),
           const SizedBox(width: 12),
 
-          IconButton(
-            onPressed: () async {
-              await context.read<CartProvider>().addToCart(
-                region: region,
-                courseId: courseModel.id,
-              );
-            },
-            icon: Icon(Icons.add, size: 20),
+          ElevatedButton(
+            onPressed: isAdded
+                ? null
+                : () async {
+                    context.read<CartProvider>().addToCart(
+                      courseId: courseModel.id,
+                      region: region,
+                    );
+                  },
+            style: ElevatedButton.styleFrom(
+              fixedSize: Size(75, 25),
+              padding: EdgeInsets.zero,
+              elevation: 0,
+              backgroundColor: ColorsConstants.containerColor,
+              foregroundColor: ColorsConstants.primary,
+              disabledBackgroundColor: Colors.black12,
+              disabledForegroundColor: ColorsConstants.textColor,
+            ),
+            child: Text(
+              isAdded ? 'Added' : 'Add to cart',
+              style: TextStyle(fontSize: 11),
+            ),
           ),
         ],
       ),

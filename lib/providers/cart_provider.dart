@@ -32,6 +32,13 @@ class CartProvider extends ChangeNotifier {
     }
   }
 
+  bool isAlreadyAdded(int courseId) {
+    if (cartModel == null) {
+      return false;
+    }
+    return cartModel!.items.any((item) => item.course.id == courseId);
+  }
+
   Future<void> addToCart({required int courseId, required int region}) async {
     try {
       isLoading = true;

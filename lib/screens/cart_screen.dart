@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:learning_course2/core/constants/colors_constants.dart';
+
 import 'package:learning_course2/providers/cart_provider.dart';
+import 'package:learning_course2/reusables/cart_screen_widget.dart';
 import 'package:provider/provider.dart';
 
 class CartScreen extends StatefulWidget {
@@ -46,6 +48,7 @@ class _CartScreenState extends State<CartScreen> {
       body: Padding(
         padding: const EdgeInsets.fromLTRB(18, 18, 18, 20),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Added Courses',
@@ -82,9 +85,10 @@ class _CartScreenState extends State<CartScreen> {
                   itemBuilder: (context, index) {
                     final item = cartScreenProvider.cartModel!.items[index];
 
-                    return ListTile(
-                      title: Text(item.course.name),
-                      subtitle: Text(item.mrp.toString()),
+                    return CartScreenWidget(
+                      cartItemModel: item,
+                      number: index + 1,
+                      onRemove: () {},
                     );
                   },
                 ),
