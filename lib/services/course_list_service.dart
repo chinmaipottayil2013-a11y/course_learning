@@ -1,0 +1,98 @@
+import 'dart:convert';
+import 'dart:developer';
+import 'package:learning_course2/core/constants/api_constants.dart';
+import 'package:http/http.dart' as http;
+import 'package:learning_course2/models/course_response_mode.dart';
+
+import 'package:learning_course2/models/filters_model.dart';
+
+class CourseListService {
+  Future<CourseResponseModel> getCourseList({
+    int? page,
+    int? pageSize,
+    String? searchQuery,
+    String? types,
+    String? categoryId,
+    String? levelId,
+    String? region,
+    String? industryId,
+    String? languageId,
+    String? duration,
+    String? rating,
+    String? price,
+    bool? freeCourse,
+    String? sortBy,
+  }) async {
+    final uri = Uri.parse(
+      ApiConstants.courseListUrl,
+    ).replace(queryParameters: {if (page != null) 'page': page.toString()});
+
+    final Map<String, dynamic> body = {
+      if (pageSize != null) 'page_size': pageSize.toString(),
+      if (searchQuery != null && searchQuery.isNotEmpty)
+        'search_query': searchQuery,
+      if (types != null && types.isNotEmpty) 'types': types,
+      if (categoryId != null && categoryId.isNotEmpty)
+        'category_id': categoryId,
+      if (levelId != null && levelId.isNotEmpty) 'level_id': levelId,
+      if (region != null && region.isNotEmpty) 'region': region,
+      if (industryId != null && industryId.isNotEmpty)
+        'industry_id': industryId,
+      if (languageId != null && languageId.isNotEmpty)
+        'language_id': languageId,
+      if (duration != null && duration.isNotEmpty) 'duration': duration,
+      if (rating != null && rating.isNotEmpty) 'rating': rating,
+      if (price != null && price.isNotEmpty) 'price': price,
+      'free_course': ?freeCourse,
+      if (sortBy != null && sortBy.isNotEmpty) 'sort_by': sortBy,
+    };
+
+    log('url is : $uri');
+    log('request body : ${jsonEncode(body)}');
+
+    final response = await http.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: jsonEncode(body),
+    );
+
+    log('response body : ${response.body}');
+    log('status code : ${response.statusCode}');
+
+    if (response.statusCode == 404 && page != 1) {
+      return CourseResponseModel(
+        count: 0,
+        next: null,
+        previous: null,
+        results: [],
+      );
+    }
+    if (response.statusCode == 200) {
+      final datas = jsonDecode(response.body);
+      return CourseResponseModel.fromJson(datas);
+    } else {
+      throw Exception('Failed to load datas :${response.statusCode}');
+    }
+  }
+
+  Future<FiltersOptionsModel> getFilters() async {
+    final uri = Uri.parse(ApiConstants.courseListUrl);
+    final response = await http.get(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    );
+
+    log('Response of filters : ${response.body}');
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return FiltersOptionsModel.fromJson(data);
+    }
+    throw Exception('Failed to load courses: ${response.statusCode}');
+  }
+}

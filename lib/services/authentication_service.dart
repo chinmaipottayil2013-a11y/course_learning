@@ -1,0 +1,96 @@
+import 'dart:convert';
+import 'dart:developer';
+
+import 'package:http/http.dart' as http;
+import 'package:learning_course2/core/constants/api_constants.dart';
+import 'package:learning_course2/core/constants/string_constants.dart';
+import 'package:learning_course2/models/authentication_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class AuthenticationService {
+  Future<AuthenticationModel?> login(String email, String password) async {
+    try {
+      final response = await http.post(
+        Uri.parse(ApiConstants.loginUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email, 'password': password}),
+      );
+
+      log('Status Code: ${response.statusCode}');
+      log('Response: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        final authenticationModel = AuthenticationModel.fromJson(data);
+
+        if (authenticationModel.accessToken.isEmpty) {
+          log('Access token missing');
+          return null;
+        }
+
+        if (authenticationModel.refreshToken.isEmpty) {
+          log('Refresh token missing');
+          return null;
+        }
+
+        await _saveTokens(
+          authenticationModel.accessToken,
+          authenticationModel.refreshToken,
+        );
+
+        return authenticationModel;
+      }
+
+      try {
+        final data = jsonDecode(response.body);
+
+        log('Login Error: ${data['message'] ?? 'Login failed'}');
+      } catch (e) {
+        log('Could not decode error response');
+      }
+
+      return null;
+    } catch (e) {
+      log('Network Error: $e');
+      return null;
+    }
+  }
+
+  Future<void> _saveTokens(String accessToken, String refreshToken) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.setString(StringConstants.accessToken, accessToken);
+
+    await prefs.setString(StringConstants.refreshToken, refreshToken);
+  }
+
+  Future<String?> getAccessToken() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    return prefs.getString(StringConstants.accessToken);
+  }
+
+  Future<String?> getRefreshToken() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    return prefs.getString(StringConstants.accessToken);
+  }
+
+  Future<bool> loggedIn() async {
+    final accessToken = await getAccessToken();
+    final refreshToken = await getRefreshToken();
+
+    return accessToken != null &&
+        accessToken.isNotEmpty &&
+        refreshToken != null &&
+        refreshToken.isNotEmpty;
+  }
+
+  Future<void> logout() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.remove(StringConstants.accessToken);
+    await prefs.remove(StringConstants.refreshToken);
+  }
+}
