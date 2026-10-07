@@ -88,7 +88,7 @@ class CourseListService {
       },
     );
 
-    log('Response of filters : ${response.body}');
+    // log('Response of filters : ${response.body}');
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       return FiltersOptionsModel.fromJson(data);

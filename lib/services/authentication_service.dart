@@ -60,26 +60,33 @@ class AuthenticationService {
   Future<void> _saveTokens(String accessToken, String refreshToken) async {
     final prefs = await SharedPreferences.getInstance();
 
-    await prefs.setString(StringConstants.accessToken, accessToken);
+    StringConstants.accessToken = accessToken;
+    StringConstants.refreshToken = refreshToken;
 
-    await prefs.setString(StringConstants.refreshToken, refreshToken);
+    await prefs.setString("acessToken", accessToken);
+
+    await prefs.setString("refreshToken", refreshToken);
   }
 
   Future<String?> getAccessToken() async {
     final prefs = await SharedPreferences.getInstance();
 
-    return prefs.getString(StringConstants.accessToken);
+    return prefs.getString("acessToken");
   }
 
   Future<String?> getRefreshToken() async {
     final prefs = await SharedPreferences.getInstance();
-
-    return prefs.getString(StringConstants.accessToken);
+    return prefs.getString("refreshToken");
   }
 
   Future<bool> loggedIn() async {
     final accessToken = await getAccessToken();
     final refreshToken = await getRefreshToken();
+
+    if (accessToken != null && refreshToken != null) {
+      StringConstants.accessToken = accessToken;
+      StringConstants.refreshToken = refreshToken;
+    }
 
     return accessToken != null &&
         accessToken.isNotEmpty &&

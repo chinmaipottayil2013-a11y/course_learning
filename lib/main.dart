@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:learning_course2/providers/authentication_provider.dart';
 import 'package:learning_course2/providers/bottom_nav_bar_provider.dart';
+import 'package:learning_course2/providers/cart_provider.dart';
 import 'package:learning_course2/providers/course_details_provider.dart';
 import 'package:learning_course2/providers/filter_provider.dart';
 import 'package:learning_course2/providers/homescreen_provider.dart';
@@ -19,6 +20,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => HomescreenProvider()),
         ChangeNotifierProvider(create: (_) => AuthenticationProvider()),
         ChangeNotifierProvider(create: (_) => BottomNavBarProvider()),
+        ChangeNotifierProvider(create: (_) => CartProvider()),
       ],
       child: MyApp(),
     ),

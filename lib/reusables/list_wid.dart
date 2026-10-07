@@ -69,8 +69,8 @@ class ListWid extends StatelessWidget {
           const SizedBox(width: 12),
 
           IconButton(
-            onPressed: () {
-              context.read<CartProvider>().addToCart(
+            onPressed: () async {
+              await context.read<CartProvider>().addToCart(
                 region: region,
                 courseId: courseModel.id,
               );

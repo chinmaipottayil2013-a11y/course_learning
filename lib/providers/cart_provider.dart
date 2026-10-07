@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
 import 'package:learning_course2/models/add_to_cart_model.dart';
 import 'package:learning_course2/models/cart_model.dart';
@@ -16,7 +18,7 @@ class CartProvider extends ChangeNotifier {
   bool isLoading = false;
   String? errorMessage;
 
-  Future<void> getCartItems(int regionId) async {
+  Future<void> getCartItems({required int regionId}) async {
     try {
       isLoading = true;
       errorMessage = null;
@@ -35,6 +37,7 @@ class CartProvider extends ChangeNotifier {
       isLoading = true;
       errorMessage = null;
       notifyListeners();
+      log("add to cart button calling...");
       _addToCartRequestModel = await _addService.addCourse(
         courseId: courseId,
         region: region,
