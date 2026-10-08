@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:learning_course2/core/constants/api_constants.dart';
 import 'package:learning_course2/core/constants/string_constants.dart';
 import 'package:learning_course2/models/cart/cart_model.dart';
-import 'package:learning_course2/models/cart/remove_from_cart_mode.dart';
+import 'package:learning_course2/models/cart/remove_from_cart_model.dart';
 import 'package:learning_course2/screens/login_screen.dart';
 
 class CartService {
