@@ -4,7 +4,7 @@ import 'package:learning_course2/providers/authentication_provider.dart';
 import 'package:learning_course2/providers/bottom_nav_bar_provider.dart';
 import 'package:learning_course2/providers/cart_provider.dart';
 import 'package:learning_course2/providers/course_details_provider.dart';
-import 'package:learning_course2/providers/filter_provider.dart';
+
 import 'package:learning_course2/providers/homescreen_provider.dart';
 
 import 'package:learning_course2/screens/splash_screen.dart';
@@ -15,7 +15,6 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => FilterProvider()),
         ChangeNotifierProvider(create: (_) => CourseDetailsProvider()),
         ChangeNotifierProvider(create: (_) => HomescreenProvider()),
         ChangeNotifierProvider(create: (_) => AuthenticationProvider()),

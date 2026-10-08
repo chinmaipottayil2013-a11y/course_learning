@@ -18,7 +18,7 @@ class _CartScreenState extends State<CartScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<CartProvider>().getCartItems(regionId: 1);
+      context.read<CartProvider>().getCartItems(regionId: 1, context: context);
     });
   }
 
@@ -88,7 +88,7 @@ class _CartScreenState extends State<CartScreen> {
                     return CartScreenWidget(
                       cartItemModel: item,
                       number: index + 1,
-                      onRemove: () {},
+                      regionId: 1,
                     );
                   },
                 ),

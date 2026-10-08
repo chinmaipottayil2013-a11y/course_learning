@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:learning_course2/core/constants/colors_constants.dart';
-import 'package:learning_course2/models/cart_item_model.dart';
+import 'package:learning_course2/models/cart/cart_item_model.dart';
+import 'package:learning_course2/providers/cart_provider.dart';
+import 'package:provider/provider.dart';
 
 class CartScreenWidget extends StatelessWidget {
   final CartItemModel cartItemModel;
   final int number;
-  final VoidCallback onRemove;
+  final int regionId;
 
   const CartScreenWidget({
     super.key,
     required this.cartItemModel,
     required this.number,
-    required this.onRemove,
+    required this.regionId,
   });
 
   @override
@@ -88,7 +90,12 @@ class CartScreenWidget extends StatelessWidget {
           const SizedBox(width: 8),
 
           IconButton(
-            onPressed: onRemove,
+            onPressed: () async {
+              await context.read<CartProvider>().deleteFromCart(
+                courseId: cartItemModel.course.id,
+                region: regionId,
+              );
+            },
             tooltip: 'Remove course',
             icon: const Icon(
               Icons.delete_outline_rounded,

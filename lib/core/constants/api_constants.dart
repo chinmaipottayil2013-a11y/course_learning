@@ -8,4 +8,6 @@ class ApiConstants {
   static String get loginUrl => '${baseUrl}user/individual-login/';
   static String get cartUrl => '${baseUrl}api/learning/cart-page/';
   static String get addToCarUrl => '${baseUrl}api/learning/add-to-cart/';
+  static String get deleteFromCart =>
+      '${baseUrl}api/learning/remove-from-cart/';
 }

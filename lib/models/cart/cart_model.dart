@@ -1,4 +1,4 @@
-import 'package:learning_course2/models/cart_item_model.dart';
+import 'package:learning_course2/models/cart/cart_item_model.dart';
 
 class CartModel {
   final int id;

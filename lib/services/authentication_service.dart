@@ -16,21 +16,16 @@ class AuthenticationService {
         body: jsonEncode({'email': email, 'password': password}),
       );
 
-      log('Status Code: ${response.statusCode}');
-      log('Response: ${response.body}');
-
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
         final authenticationModel = AuthenticationModel.fromJson(data);
 
         if (authenticationModel.accessToken.isEmpty) {
-          log('Access token missing');
           return null;
         }
 
         if (authenticationModel.refreshToken.isEmpty) {
-          log('Refresh token missing');
           return null;
         }
 
