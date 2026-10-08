@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:learning_course2/models/cart/add_to_cart_model.dart';
 import 'package:learning_course2/models/cart/cart_model.dart';
-import 'package:learning_course2/models/cart/remove_from_cart_mode.dart';
+import 'package:learning_course2/models/cart/remove_from_cart_model.dart';
 import 'package:learning_course2/providers/homescreen_provider.dart';
 
 import 'package:learning_course2/services/cart_service.dart';
@@ -43,13 +43,6 @@ class CartProvider extends ChangeNotifier {
       isLoading = false;
       notifyListeners();
     }
-  }
-
-  bool isAlreadyAdded(int courseId) {
-    if (cartModel == null) {
-      return false;
-    }
-    return cartModel!.items.any((item) => item.course.id == courseId);
   }
 
   //Add To Cart Provider Method

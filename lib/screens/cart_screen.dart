@@ -80,7 +80,9 @@ class _CartScreenState extends State<CartScreen> {
               const Expanded(child: Center(child: Text('Your cart is empty')))
             else
               Expanded(
-                child: ListView.builder(
+                child: ListView.separated(
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 8),
                   itemCount: cartScreenProvider.cartModel!.items.length,
                   itemBuilder: (context, index) {
                     final item = cartScreenProvider.cartModel!.items[index];

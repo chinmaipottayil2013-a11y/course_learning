@@ -18,13 +18,15 @@ class CartScreenWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final course = cartItemModel.course;
+    final String imageUrl = course.image;
+
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border.all(color: const Color(0xFFE6E8F0)),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(18),
         boxShadow: const [
           BoxShadow(
             color: Color(0x0D101828),
@@ -36,22 +38,59 @@ class CartScreenWidget extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container(
-            height: 34,
-            width: 34,
-            alignment: Alignment.center,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: ColorsConstants.containerColor,
-            ),
-            child: Text(
-              '$number',
-              style: const TextStyle(
-                color: ColorsConstants.primary,
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: SizedBox(
+                  width: 92,
+                  height: 92,
+                  child: (imageUrl.isEmpty)
+                      ? _placeholder()
+                      : Image.network(
+                          imageUrl,
+                          fit: BoxFit.cover,
+
+                          loadingBuilder: (_, child, progress) =>
+                              progress == null
+                              ? child
+                              : Container(
+                                  color: ColorsConstants.containerColor,
+                                  alignment: Alignment.center,
+                                  child: const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  ),
+                                ),
+                          errorBuilder: (_, _, _) => _placeholder(),
+                        ),
+                ),
               ),
-            ),
+              Positioned(
+                top: 6,
+                left: 6,
+                child: Container(
+                  height: 24,
+                  width: 24,
+                  alignment: Alignment.center,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white,
+                  ),
+                  child: Text(
+                    '$number',
+                    style: const TextStyle(
+                      color: ColorsConstants.primary,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
 
           const SizedBox(width: 14),
@@ -61,42 +100,54 @@ class CartScreenWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  cartItemModel.course.name,
+                  course.name,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     fontSize: 15,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w700,
                     height: 1.3,
                     letterSpacing: -0.2,
                     color: ColorsConstants.textColor,
                   ),
                 ),
+                const SizedBox(height: 8),
 
-                const SizedBox(height: 7),
-
-                Text(
-                  '₹${cartItemModel.course.mrp}',
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: ColorsConstants.primary,
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: ColorsConstants.containerColor,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    '₹${course.mrp}',
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: ColorsConstants.primary,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
 
-          const SizedBox(width: 8),
+          const SizedBox(width: 4),
 
           IconButton(
             onPressed: () async {
               await context.read<CartProvider>().deleteFromCart(
-                courseId: cartItemModel.course.id,
+                courseId: course.id,
                 region: regionId,
               );
             },
             tooltip: 'Remove course',
+            style: IconButton.styleFrom(
+              backgroundColor: Colors.redAccent.withValues(alpha: 0.08),
+            ),
             icon: const Icon(
               Icons.delete_outline_rounded,
               size: 20,
@@ -107,4 +158,14 @@ class CartScreenWidget extends StatelessWidget {
       ),
     );
   }
+
+  Widget _placeholder() => Container(
+    color: ColorsConstants.containerColor,
+    alignment: Alignment.center,
+    child: const Icon(
+      Icons.school_outlined,
+      size: 32,
+      color: ColorsConstants.primary,
+    ),
+  );
 }
