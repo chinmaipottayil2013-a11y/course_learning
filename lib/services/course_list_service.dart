@@ -59,8 +59,8 @@ class CourseListService {
       body: jsonEncode(body),
     );
 
-    log('response body : ${response.body}');
-    log('status code : ${response.statusCode}');
+    // log('response body : ${response.body}');
+    // log('status code : ${response.statusCode}');
 
     if (response.statusCode == 404 && page != 1) {
       return CourseResponseModel(
@@ -88,7 +88,7 @@ class CourseListService {
       },
     );
 
-    log('Response of filters : ${response.body}');
+    // log('Response of filters : ${response.body}');
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       return FiltersOptionsModel.fromJson(data);

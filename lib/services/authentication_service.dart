@@ -16,21 +16,16 @@ class AuthenticationService {
         body: jsonEncode({'email': email, 'password': password}),
       );
 
-      log('Status Code: ${response.statusCode}');
-      log('Response: ${response.body}');
-
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
         final authenticationModel = AuthenticationModel.fromJson(data);
 
         if (authenticationModel.accessToken.isEmpty) {
-          log('Access token missing');
           return null;
         }
 
         if (authenticationModel.refreshToken.isEmpty) {
-          log('Refresh token missing');
           return null;
         }
 
@@ -60,26 +55,33 @@ class AuthenticationService {
   Future<void> _saveTokens(String accessToken, String refreshToken) async {
     final prefs = await SharedPreferences.getInstance();
 
-    await prefs.setString(StringConstants.accessToken, accessToken);
+    StringConstants.accessToken = accessToken;
+    StringConstants.refreshToken = refreshToken;
 
-    await prefs.setString(StringConstants.refreshToken, refreshToken);
+    await prefs.setString("accessToken", accessToken);
+
+    await prefs.setString("refreshToken", refreshToken);
   }
 
   Future<String?> getAccessToken() async {
     final prefs = await SharedPreferences.getInstance();
 
-    return prefs.getString(StringConstants.accessToken);
+    return prefs.getString("accessToken");
   }
 
   Future<String?> getRefreshToken() async {
     final prefs = await SharedPreferences.getInstance();
-
-    return prefs.getString(StringConstants.accessToken);
+    return prefs.getString("refreshToken");
   }
 
   Future<bool> loggedIn() async {
     final accessToken = await getAccessToken();
     final refreshToken = await getRefreshToken();
+
+    if (accessToken != null && refreshToken != null) {
+      StringConstants.accessToken = accessToken;
+      StringConstants.refreshToken = refreshToken;
+    }
 
     return accessToken != null &&
         accessToken.isNotEmpty &&
@@ -92,5 +94,7 @@ class AuthenticationService {
 
     await prefs.remove(StringConstants.accessToken);
     await prefs.remove(StringConstants.refreshToken);
+
+    await prefs.clear();
   }
 }

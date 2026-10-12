@@ -3,7 +3,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:learning_course2/core/constants/colors_constants.dart';
 import 'package:learning_course2/providers/authentication_provider.dart';
-import 'package:learning_course2/screens/homescreen.dart';
+import 'package:learning_course2/screens/bottom_nav_bar_screen.dart';
+
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -127,7 +128,7 @@ class LoginScreen extends StatelessWidget {
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => const Homescreen(),
+                              builder: (_) => const BottomNavBarScreen(),
                             ),
                           );
                         }

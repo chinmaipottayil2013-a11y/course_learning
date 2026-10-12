@@ -68,14 +68,29 @@ class ListWid extends StatelessWidget {
           ),
           const SizedBox(width: 12),
 
-          IconButton(
-            onPressed: () {
-              context.read<CartProvider>().addToCart(
-                region: region,
-                courseId: courseModel.id,
-              );
-            },
-            icon: Icon(Icons.add, size: 20),
+          ElevatedButton(
+            onPressed: courseModel.isCartAdded
+                ? null
+                : () async {
+                    await context.read<CartProvider>().addToCart(
+                      courseId: courseModel.id,
+                      region: region,
+                      context: context,
+                    );
+                  },
+            style: ElevatedButton.styleFrom(
+              fixedSize: Size(75, 25),
+              padding: EdgeInsets.zero,
+              elevation: 0,
+              backgroundColor: ColorsConstants.containerColor,
+              foregroundColor: ColorsConstants.primary,
+              disabledBackgroundColor: Colors.black12,
+              disabledForegroundColor: ColorsConstants.textColor,
+            ),
+            child: Text(
+              courseModel.isCartAdded ? 'Added' : 'Add to cart',
+              style: TextStyle(fontSize: 11),
+            ),
           ),
         ],
       ),

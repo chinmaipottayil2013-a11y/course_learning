@@ -1,4 +1,3 @@
-
 import 'package:learning_course2/models/last_viewed_model.dart';
 import 'package:learning_course2/models/provider_model.dart';
 
@@ -14,7 +13,7 @@ class CourseModel {
   final String level;
 
   final bool isFavourite;
-  final bool isCartAdded;
+  bool isCartAdded;
 
   final int totalReviewCount;
   final double averageReview;
@@ -133,8 +132,44 @@ class CourseModel {
       region: json['region'] is int
           ? json['region']
           : (json['region'] is List && (json['region'] as List).isNotEmpty
-              ? int.tryParse(json['region'][0].toString())
-              : int.tryParse(json['region']?.toString() ?? json['region_id']?.toString() ?? '')),
+                ? int.tryParse(json['region'][0].toString())
+                : int.tryParse(
+                    json['region']?.toString() ??
+                        json['region_id']?.toString() ??
+                        '',
+                  )),
+    );
+  }
+
+  CourseModel copyWith({bool? isCartAdded}) {
+    return CourseModel(
+      id: id,
+      name: name,
+      image: image,
+      smallDescription: smallDescription,
+      slug: slug,
+      salePrice: salePrice,
+      mrp: mrp,
+      totalHour: totalHour,
+      level: level,
+      isFavourite: isFavourite,
+      isCartAdded: isCartAdded ?? this.isCartAdded,
+      totalReviewCount: totalReviewCount,
+      averageReview: averageReview,
+      completedPercentage: completedPercentage,
+      lastViewedLecture: lastViewedLecture,
+      isPurchased: isPurchased,
+      instructors: instructors,
+      provider: provider,
+      institution: institution,
+      isBundle: isBundle,
+      isCombo: isCombo,
+      scheduleStartTime: scheduleStartTime,
+      scheduleEndTime: scheduleEndTime,
+      isSponsored: isSponsored,
+      sponsoredWeight: sponsoredWeight,
+      isFeatured: isFeatured,
+      region: region,
     );
   }
 }
