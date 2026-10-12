@@ -57,6 +57,8 @@ class HomescreenProvider extends ChangeNotifier {
       _courseResponseModel = courses;
       if (courseResponseModel != null) {
         _courseModel = courseResponseModel!.results;
+        log('Course details : ${courseResponseModel!.results}');
+
         // log("course length is ${courses.length}");
         log("courseResponseModel!.count is ${courseResponseModel!.count}");
         if (courseResponseModel!.count < pageSize) {
@@ -64,6 +66,7 @@ class HomescreenProvider extends ChangeNotifier {
         }
       }
     } catch (e) {
+      log("error in the provider is ${e.toString()}");
       errorMessage = e.toString();
     } finally {
       isLoading = false;

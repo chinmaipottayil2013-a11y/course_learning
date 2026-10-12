@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:learning_course2/core/constants/api_constants.dart';
 import 'package:http/http.dart' as http;
+import 'package:learning_course2/core/constants/string_constants.dart';
 import 'package:learning_course2/models/course_response_mode.dart';
 
 import 'package:learning_course2/models/filters_model.dart';
@@ -28,6 +29,7 @@ class CourseListService {
     ).replace(queryParameters: {if (page != null) 'page': page.toString()});
 
     final Map<String, dynamic> body = {
+      'region': "3",
       if (pageSize != null) 'page_size': pageSize.toString(),
       if (searchQuery != null && searchQuery.isNotEmpty)
         'search_query': searchQuery,
@@ -55,12 +57,14 @@ class CourseListService {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
+        'Authorization': 'Bearer ${StringConstants.accessToken}',
       },
+
       body: jsonEncode(body),
     );
 
-    // log('response body : ${response.body}');
-    // log('status code : ${response.statusCode}');
+    log('response body : ${response.body}');
+    log('status code : ${response.statusCode}');
 
     if (response.statusCode == 404 && page != 1) {
       return CourseResponseModel(

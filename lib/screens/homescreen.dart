@@ -563,6 +563,7 @@ class _HomescreenState extends State<Homescreen> {
                           }
 
                           final course = homeScreenProvider.courseModel[index];
+                          log("course cart details is ${course.isCartAdded}");
 
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 5),
@@ -581,7 +582,7 @@ class _HomescreenState extends State<Homescreen> {
                               child: ListWid(
                                 courseModel: course,
                                 number: index + 1,
-                                region: course.region ?? 0,
+                                region: 3,
                               ),
                             ),
                           );

@@ -1,5 +1,5 @@
 class LastViewedLectureModel {
-  final int id;
+  final dynamic id;
   final String name;
   final String types;
   final int orderBy;
