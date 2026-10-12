@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:learning_course2/models/cart/add_to_cart_model.dart';
 import 'package:learning_course2/models/cart/cart_model.dart';
@@ -26,8 +24,6 @@ class CartProvider extends ChangeNotifier {
   bool isDeleting = false;
   String? errorMessage;
 
-  //Get Cart Items Provider Method
-
   Future<void> getCartItems({
     required int regionId,
     required BuildContext context,
@@ -45,8 +41,6 @@ class CartProvider extends ChangeNotifier {
     }
   }
 
-  //Add To Cart Provider Method
-
   Future<void> addToCart({
     required int courseId,
     required int region,
@@ -58,12 +52,14 @@ class CartProvider extends ChangeNotifier {
         region: region,
       );
 
-      log('response in the cart provider $response');
+      // log('response in the cart provider $response');
 
       if (response) {
-        context.read<HomescreenProvider>().markCourseAsAdded(courseId);
+        if (context.mounted) {
+          context.read<HomescreenProvider>().markCourseAsAdded(courseId);
 
-        notifyListeners();
+          notifyListeners();
+        }
       }
     } catch (e) {
       errorMessage = e.toString();
@@ -72,8 +68,6 @@ class CartProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
-
-  //Delete From Cart Provider Method
 
   Future<void> deleteFromCart({
     required int courseId,

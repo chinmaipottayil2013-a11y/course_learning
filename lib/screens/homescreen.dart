@@ -581,7 +581,7 @@ class _HomescreenState extends State<Homescreen> {
                               child: ListWid(
                                 courseModel: course,
                                 number: index + 1,
-                                region: course.region ?? 0,
+                                region: 3,
                               ),
                             ),
                           );

@@ -2,7 +2,6 @@ import 'package:learning_course2/models/last_viewed_model.dart';
 import 'package:learning_course2/models/provider_model.dart';
 
 class CourseModel {
-  final int id;
   final String name;
   final String image;
   final String smallDescription;
@@ -11,11 +10,8 @@ class CourseModel {
   final double mrp;
   final String totalHour;
   final String level;
-
   final bool isFavourite;
   bool isCartAdded;
-
-  final int totalReviewCount;
   final double averageReview;
   final double completedPercentage;
 
@@ -33,11 +29,12 @@ class CourseModel {
 
   final String? scheduleStartTime;
   final String? scheduleEndTime;
-
   final bool isSponsored;
-  final int sponsoredWeight;
+  // final int sponsoredWeight;
   final bool isFeatured;
-  final int? region;
+  final int id;
+  // final int? region;
+  final int totalReviewCount;
 
   CourseModel({
     required this.id,
@@ -64,9 +61,8 @@ class CourseModel {
     required this.scheduleStartTime,
     required this.scheduleEndTime,
     required this.isSponsored,
-    required this.sponsoredWeight,
+    // required this.sponsoredWeight,
     required this.isFeatured,
-    this.region,
   });
 
   factory CourseModel.fromJson(Map<String, dynamic> json) {
@@ -125,19 +121,8 @@ class CourseModel {
 
       isSponsored: json['is_sponsored'] ?? false,
 
-      sponsoredWeight: json['sponsored_weight'] ?? 0,
-
+      // sponsoredWeight: json['sponsored_weight'] ?? 0,
       isFeatured: json['is_featured'] ?? false,
-
-      region: json['region'] is int
-          ? json['region']
-          : (json['region'] is List && (json['region'] as List).isNotEmpty
-                ? int.tryParse(json['region'][0].toString())
-                : int.tryParse(
-                    json['region']?.toString() ??
-                        json['region_id']?.toString() ??
-                        '',
-                  )),
     );
   }
 
@@ -167,9 +152,8 @@ class CourseModel {
       scheduleStartTime: scheduleStartTime,
       scheduleEndTime: scheduleEndTime,
       isSponsored: isSponsored,
-      sponsoredWeight: sponsoredWeight,
+      // sponsoredWeight: sponsoredWeight,
       isFeatured: isFeatured,
-      region: region,
     );
   }
 }
