@@ -57,7 +57,7 @@ class HomescreenProvider extends ChangeNotifier {
       _courseResponseModel = courses;
       if (courseResponseModel != null) {
         _courseModel = courseResponseModel!.results;
-        log('Course details : ${courseResponseModel!.results}');
+        // log('Course details : ${courseResponseModel!.results}');
 
         // log("course length is ${courses.length}");
         log("courseResponseModel!.count is ${courseResponseModel!.count}");
@@ -158,11 +158,11 @@ class HomescreenProvider extends ChangeNotifier {
 
   void markCourseAsAdded(int courseId) {
     final index = _courseModel.indexWhere((course) => courseId == course.id);
-    log('markCourseAsAdded: id=$courseId index=$index');
+    // log('markCourseAsAdded: id=$courseId index=$index');
 
     if (index != -1) {
       _courseModel[index] = _courseModel[index].copyWith(isCartAdded: true);
-      log('after update: ${_courseModel[index].isCartAdded}');
+      // log('after update: ${_courseModel[index].isCartAdded}');
       notifyListeners();
     }
   }

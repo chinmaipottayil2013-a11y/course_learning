@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -40,12 +39,12 @@ class CartService {
   //COURSE TO CART ADDING SERVICE
 
   Future<bool> addCourse({required int courseId, required int region}) async {
-    log("course id is $courseId");
+    // log("course id is $courseId");
     final uri = Uri.parse(ApiConstants.addToCarUrl);
 
     final body = {'course_id': courseId, 'region': region};
 
-    log("add to cart service calling");
+    // log("add to cart service calling");
     final response = await http.post(
       uri,
       headers: {
@@ -57,11 +56,11 @@ class CartService {
       body: jsonEncode(body),
     );
 
-    log("add to cart response code is ${response.statusCode}");
-    log("add to cart response is ${response.body}");
+    // log("add to cart response code is ${response.statusCode}");
+    // log("add to cart response is ${response.body}");
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      log("add to cart response is ${response.body}");
+      // log("add to cart response is ${response.body}");
       return true;
     } else {
       return false;

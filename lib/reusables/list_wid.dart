@@ -8,6 +8,7 @@ class ListWid extends StatelessWidget {
   final CourseModel courseModel;
   final int number;
   final int region;
+
   const ListWid({
     super.key,
     required this.courseModel,
@@ -17,79 +18,154 @@ class ListWid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+    final bool isAdded = courseModel.isCartAdded;
 
+    return Container(
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border.all(color: const Color(0xFFE6E8F0)),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0xFFEAECF0), width: 1),
+        boxShadow: [
           BoxShadow(
-            color: Color(0x0D101828),
-            blurRadius: 20,
-            offset: Offset(0, 8),
+            color: Colors.black.withOpacity(0.035),
+            blurRadius: 14,
+            offset: const Offset(0, 5),
           ),
         ],
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container(
-            height: 30,
-            width: 30,
-            alignment: Alignment.center,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: ColorsConstants.containerColor,
-            ),
-            child: Text(
-              '$number',
-              style: const TextStyle(
-                color: ColorsConstants.primary,
-                fontSize: 12.5,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Text(
-              courseModel.name,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 2,
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 15,
-                height: 1.3,
-                letterSpacing: -0.2,
-                color: ColorsConstants.textColor,
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(14),
+            child: SizedBox(
+              width: 88,
+              height: 92,
+              child: Image.network(
+                courseModel.image,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: const Color(0xFFF2F4F7),
+                    alignment: Alignment.center,
+                    child: const Icon(
+                      Icons.menu_book_rounded,
+                      size: 30,
+                      color: Color(0xFF98A2B3),
+                    ),
+                  );
+                },
+                loadingBuilder: (context, child, progress) {
+                  if (progress == null) return child;
 
-          ElevatedButton(
-            onPressed: courseModel.isCartAdded
-                ? null
-                : () async {
-                    await context.read<CartProvider>().addToCart(
-                      courseId: courseModel.id,
-                      region: region,
-                      context: context,
-                    );
-                  },
-            style: ElevatedButton.styleFrom(
-              fixedSize: Size(75, 25),
-              padding: EdgeInsets.zero,
-              elevation: 0,
-              backgroundColor: ColorsConstants.containerColor,
-              foregroundColor: ColorsConstants.primary,
-              disabledBackgroundColor: Colors.black12,
-              disabledForegroundColor: ColorsConstants.textColor,
+                  return Container(
+                    color: const Color(0xFFF2F4F7),
+                    alignment: Alignment.center,
+                    child: const SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  );
+                },
+              ),
             ),
-            child: Text(
-              courseModel.isCartAdded ? 'Added' : 'Add to cart',
-              style: TextStyle(fontSize: 11),
+          ),
+
+          const SizedBox(width: 14),
+
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  courseModel.name,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    height: 1.35,
+                    letterSpacing: -0.25,
+                    color: Color(0xFF101828),
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+
+                Row(
+                  children: [
+                    Text(
+                      "${courseModel.mrp}",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: ColorsConstants.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Spacer(),
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeInOut,
+                      child: SizedBox(
+                        height: 36,
+                        child: ElevatedButton(
+                          onPressed: isAdded
+                              ? null
+                              : () async {
+                                  await context.read<CartProvider>().addToCart(
+                                    courseId: courseModel.id,
+                                    region: region,
+                                    context: context,
+                                  );
+                                },
+                          style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                            backgroundColor: isAdded
+                                ? const Color(0xFFE8F7EE)
+                                : ColorsConstants.primary,
+                            foregroundColor: isAdded
+                                ? const Color(0xFF16834A)
+                                : Colors.white,
+                            disabledBackgroundColor: const Color(0xFFE8F7EE),
+                            disabledForegroundColor: const Color(0xFF16834A),
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              side: BorderSide(
+                                color: isAdded
+                                    ? const Color(0xFFC5EBD3)
+                                    : Colors.transparent,
+                              ),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                isAdded
+                                    ? Icons.check_circle_rounded
+                                    : Icons.add_shopping_cart_rounded,
+                                size: 16,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                isAdded ? 'Added' : 'Add to cart',
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ],

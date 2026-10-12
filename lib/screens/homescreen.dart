@@ -563,7 +563,6 @@ class _HomescreenState extends State<Homescreen> {
                           }
 
                           final course = homeScreenProvider.courseModel[index];
-                          log("course cart details is ${course.isCartAdded}");
 
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 5),

@@ -63,8 +63,8 @@ class CourseListService {
       body: jsonEncode(body),
     );
 
-    log('response body : ${response.body}');
-    log('status code : ${response.statusCode}');
+    // log('response body : ${response.body}');
+    // log('status code : ${response.statusCode}');
 
     if (response.statusCode == 404 && page != 1) {
       return CourseResponseModel(
