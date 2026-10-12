@@ -58,7 +58,7 @@ class AuthenticationService {
     StringConstants.accessToken = accessToken;
     StringConstants.refreshToken = refreshToken;
 
-    await prefs.setString("acessToken", accessToken);
+    await prefs.setString("accessToken", accessToken);
 
     await prefs.setString("refreshToken", refreshToken);
   }
@@ -66,7 +66,7 @@ class AuthenticationService {
   Future<String?> getAccessToken() async {
     final prefs = await SharedPreferences.getInstance();
 
-    return prefs.getString("acessToken");
+    return prefs.getString("accessToken");
   }
 
   Future<String?> getRefreshToken() async {
@@ -94,5 +94,7 @@ class AuthenticationService {
 
     await prefs.remove(StringConstants.accessToken);
     await prefs.remove(StringConstants.refreshToken);
+
+    await prefs.clear();
   }
 }
