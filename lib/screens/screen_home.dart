@@ -1,27 +1,29 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:learning_course2/core/constants/colors_constants.dart';
 import 'package:learning_course2/providers/authentication_provider.dart';
 import 'package:learning_course2/providers/homescreen_provider.dart';
-import 'package:learning_course2/reusables/list_wid.dart';
-import 'package:learning_course2/screens/course_details_screen.dart';
-import 'package:learning_course2/screens/login_screen.dart';
+import 'package:learning_course2/reusables/course_list_widget.dart';
+import 'package:learning_course2/screens/screen_login.dart';
+import 'package:learning_course2/screens/screen_course_details.dart';
+
 import 'package:provider/provider.dart';
 
-class Homescreen extends StatefulWidget {
-  const Homescreen({super.key});
+class ScreenHome extends StatefulWidget {
+  const ScreenHome({super.key});
 
   @override
-  State<Homescreen> createState() => _HomescreenState();
+  State<ScreenHome> createState() => _HomescreenState();
 }
 
-class _HomescreenState extends State<Homescreen> {
+class _HomescreenState extends State<ScreenHome> {
   final ScrollController _controller = ScrollController();
 
   void getDatas() async {
     await Future.wait([
-      context.read<HomescreenProvider>().getCourses(),
+      context.read<HomescreenProvider>().getCourses(context: context),
       context.read<HomescreenProvider>().getFilters(),
     ]);
   }
@@ -31,7 +33,7 @@ class _HomescreenState extends State<Homescreen> {
 
     if (_controller.position.pixels >
         _controller.position.maxScrollExtent - 300) {
-      homeProvider.loadMoreCourses();
+      homeProvider.loadMoreCourses(context: context);
     }
   }
 
@@ -42,7 +44,7 @@ class _HomescreenState extends State<Homescreen> {
 
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (_) => const LoginScreen()),
+      MaterialPageRoute(builder: (_) => const ScreenLogin()),
       (route) => false,
     );
   }
@@ -274,6 +276,7 @@ class _HomescreenState extends State<Homescreen> {
                             languageId?.toString(),
                             levelId?.toString(),
                             industryId?.toString(),
+                            context,
                           );
                         },
                         style: FilledButton.styleFrom(
@@ -350,7 +353,7 @@ class _HomescreenState extends State<Homescreen> {
           backgroundColor: Colors.white,
 
           onRefresh: () async {
-            await homeScreenProvider.refreshProducts();
+            await homeScreenProvider.refreshProducts(context: context);
           },
 
           child: SingleChildScrollView(
@@ -383,7 +386,7 @@ class _HomescreenState extends State<Homescreen> {
                           controller: homeScreenProvider.textEditingController,
 
                           onSubmitted: (value) {
-                            homeScreenProvider.getCourses();
+                            homeScreenProvider.getCourses(context: context);
                           },
 
                           style: const TextStyle(
@@ -399,7 +402,9 @@ class _HomescreenState extends State<Homescreen> {
 
                             suffixIcon: IconButton(
                               onPressed: () async {
-                                await homeScreenProvider.getCourses();
+                                await homeScreenProvider.getCourses(
+                                  context: context,
+                                );
                               },
 
                               icon: const Icon(
@@ -500,12 +505,11 @@ class _HomescreenState extends State<Homescreen> {
                 const SizedBox(height: 14),
 
                 homeScreenProvider.isLoading
-                    ? const Padding(
+                    ? Padding(
                         padding: EdgeInsets.only(top: 60),
                         child: Center(
-                          child: CircularProgressIndicator(
-                            color: ColorsConstants.primary,
-                            strokeWidth: 2.5,
+                          child: SpinKitFadingCircle(
+                            color: Colors.blue.shade900,
                           ),
                         ),
                       )
@@ -551,12 +555,12 @@ class _HomescreenState extends State<Homescreen> {
 
                         itemBuilder: (context, index) {
                           if (index == homeScreenProvider.courseModel.length) {
-                            return const Padding(
+                            return Padding(
                               padding: EdgeInsets.all(16),
                               child: Center(
-                                child: CircularProgressIndicator(
-                                  color: ColorsConstants.primary,
-                                  strokeWidth: 2.5,
+                                child: SpinKitThreeBounce(
+                                  color: Colors.blue.shade900,
+                                  size: 28,
                                 ),
                               ),
                             );
@@ -573,7 +577,7 @@ class _HomescreenState extends State<Homescreen> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (_) =>
-                                        CourseDetailsScreen(slug: course.slug),
+                                        ScreenCourseDetails(slug: course.slug),
                                   ),
                                 );
                               },

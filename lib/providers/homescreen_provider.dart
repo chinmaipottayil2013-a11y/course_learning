@@ -37,7 +37,7 @@ class HomescreenProvider extends ChangeNotifier {
   String? _languageId;
   String? _industryId;
 
-  Future<void> getCourses() async {
+  Future<void> getCourses({required BuildContext context}) async {
     try {
       isLoading = true;
       errorMessage = null;
@@ -53,6 +53,7 @@ class HomescreenProvider extends ChangeNotifier {
         levelId: _levelId,
         languageId: _languageId,
         industryId: _industryId,
+        context: context,
       );
       _courseResponseModel = courses;
       if (courseResponseModel != null) {
@@ -74,7 +75,7 @@ class HomescreenProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> loadMoreCourses() async {
+  Future<void> loadMoreCourses({required BuildContext context}) async {
     if (!hasMore || isLoadingMore) return;
     try {
       isLoadingMore = true;
@@ -88,6 +89,7 @@ class HomescreenProvider extends ChangeNotifier {
         levelId: _levelId,
         languageId: _languageId,
         industryId: _industryId,
+        context: context,
       );
       _courseModel.addAll(newCourses.results);
       currentPage = nextPage;
@@ -102,8 +104,8 @@ class HomescreenProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> refreshProducts() async {
-    await getCourses();
+  Future<void> refreshProducts({required BuildContext context}) async {
+    await getCourses(context: context);
   }
 
   void selectedCategory(int id) {
@@ -148,12 +150,13 @@ class HomescreenProvider extends ChangeNotifier {
     String? levelId,
     String? languageId,
     String? industryId,
+    BuildContext context,
   ) async {
     _categoryId = categoryId;
     _levelId = levelId;
     _languageId = languageId;
     _industryId = industryId;
-    await getCourses();
+    await getCourses(context: context);
   }
 
   void markCourseAsAdded(int courseId) {

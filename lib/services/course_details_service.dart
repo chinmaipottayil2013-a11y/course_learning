@@ -2,12 +2,12 @@ import 'dart:convert';
 
 import 'package:learning_course2/core/constants/api_constants.dart';
 import 'package:learning_course2/models/course_details_model.dart';
-import 'package:http/http.dart' as http;
+import 'package:http/http.dart' as apiclient;
 
 class CourseDetailsService {
   Future<CourseDetailsModel> getCourseDetails(String slug) async {
     final uri = Uri.parse('${ApiConstants.detailsUrl}$slug/');
-    final response = await http.get(uri);
+    final response = await apiclient.get(uri);
     if (response.statusCode == 200) {
       final datas = jsonDecode(response.body);
       final data = datas['Datas'] ?? datas['data'] ?? datas;

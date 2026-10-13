@@ -1,12 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:http/http.dart' as apiclient;
 import 'package:learning_course2/core/constants/api_constants.dart';
 import 'package:learning_course2/core/constants/string_constants.dart';
 import 'package:learning_course2/models/cart/cart_model.dart';
 import 'package:learning_course2/models/cart/remove_from_cart_model.dart';
-import 'package:learning_course2/screens/login_screen.dart';
+import 'package:learning_course2/screens/screen_login.dart';
 
 class CartService {
   Future<CartModel> getCourses(int regionId, BuildContext context) async {
@@ -14,7 +14,7 @@ class CartService {
       ApiConstants.cartUrl,
     ).replace(queryParameters: {'region_id': regionId.toString()});
 
-    final response = await http.get(
+    final response = await apiclient.get(
       uri,
       headers: {'Authorization': 'Bearer ${StringConstants.accessToken}'},
     );
@@ -24,7 +24,7 @@ class CartService {
     if (response.statusCode == 401) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const LoginScreen()),
+        MaterialPageRoute(builder: (_) => const ScreenLogin()),
       );
     }
     if (response.statusCode == 200) {
@@ -45,7 +45,7 @@ class CartService {
     final body = {'course_id': courseId, 'region': region};
 
     // log("add to cart service calling");
-    final response = await http.post(
+    final response = await apiclient.post(
       uri,
       headers: {
         'Content-Type': 'application/json',
@@ -79,7 +79,7 @@ class CartService {
       courseId: courseId,
       region: region,
     );
-    final response = await http.post(
+    final response = await apiclient.post(
       uri,
 
       headers: {

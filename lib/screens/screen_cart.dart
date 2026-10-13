@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:learning_course2/core/constants/colors_constants.dart';
 
 import 'package:learning_course2/providers/cart_provider.dart';
 import 'package:learning_course2/reusables/cart_screen_widget.dart';
 import 'package:provider/provider.dart';
 
-class CartScreen extends StatefulWidget {
-  const CartScreen({super.key});
+class ScreenCart extends StatefulWidget {
+  const ScreenCart({super.key});
 
   @override
-  State<CartScreen> createState() => _CartScreenState();
+  State<ScreenCart> createState() => _ScreenCartState();
 }
 
-class _CartScreenState extends State<CartScreen> {
+class _ScreenCartState extends State<ScreenCart> {
   @override
   void initState() {
     super.initState();
@@ -62,7 +63,11 @@ class _CartScreenState extends State<CartScreen> {
             const SizedBox(height: 20),
 
             if (cartScreenProvider.isLoading)
-              const Expanded(child: Center(child: CircularProgressIndicator()))
+              Expanded(
+                child: Center(
+                  child: SpinKitFadingCircle(color: Colors.blue.shade900),
+                ),
+              )
             else if (cartScreenProvider.errorMessage != null)
               Expanded(
                 child: Center(

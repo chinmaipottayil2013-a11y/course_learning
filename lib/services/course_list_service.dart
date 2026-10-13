@@ -1,14 +1,18 @@
 import 'dart:convert';
 import 'dart:developer';
+
+import 'package:flutter/material.dart';
 import 'package:learning_course2/core/constants/api_constants.dart';
-import 'package:http/http.dart' as http;
+import 'package:http/http.dart' as apiclient;
 import 'package:learning_course2/core/constants/string_constants.dart';
 import 'package:learning_course2/models/course_response_mode.dart';
 
 import 'package:learning_course2/models/filters_model.dart';
+import 'package:learning_course2/screens/screen_login.dart';
 
 class CourseListService {
   Future<CourseResponseModel> getCourseList({
+    required BuildContext context,
     int? page,
     int? pageSize,
     String? searchQuery,
@@ -52,7 +56,7 @@ class CourseListService {
     log('url is : $uri');
     log('request body : ${jsonEncode(body)}');
 
-    final response = await http.post(
+    final response = await apiclient.post(
       uri,
       headers: {
         'Content-Type': 'application/json',
@@ -62,6 +66,11 @@ class CourseListService {
 
       body: jsonEncode(body),
     );
+
+    log('Request URL: $uri');
+    log('Status Code: ${response.statusCode}');
+    log('Response Body: ${response.body}');
+    log('Response Headers: ${response.headers}');
 
     // log('response body : ${response.body}');
     // log('status code : ${response.statusCode}');
@@ -74,6 +83,14 @@ class CourseListService {
         results: [],
       );
     }
+
+    if (response.statusCode == 401) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const ScreenLogin()),
+      );
+    }
+
     if (response.statusCode == 200) {
       final datas = jsonDecode(response.body);
       return CourseResponseModel.fromJson(datas);
@@ -84,7 +101,7 @@ class CourseListService {
 
   Future<FiltersOptionsModel> getFilters() async {
     final uri = Uri.parse(ApiConstants.courseListUrl);
-    final response = await http.get(
+    final response = await apiclient.get(
       uri,
       headers: {
         'Content-Type': 'application/json',
