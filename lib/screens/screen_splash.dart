@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:learning_course2/screens/bottom_nav_bar_screen.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:learning_course2/screens/screen_login.dart';
+import 'package:learning_course2/screens/screen_bottom_nav.dart';
 
-import 'package:learning_course2/screens/login_screen.dart';
 import 'package:learning_course2/services/authentication_service.dart';
 
-class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+class ScreenSplash extends StatefulWidget {
+  const ScreenSplash({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  State<ScreenSplash> createState() => _ScreenSplashState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _ScreenSplashState extends State<ScreenSplash> {
   final AuthenticationService _authService = AuthenticationService();
 
   @override
@@ -35,7 +36,7 @@ class _SplashScreenState extends State<SplashScreen> {
     } else {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const LoginScreen()),
+        MaterialPageRoute(builder: (_) => const ScreenLogin()),
       );
     }
   }
@@ -53,7 +54,7 @@ class _SplashScreenState extends State<SplashScreen> {
             SizedBox(height: 50),
             SizedBox(
               width: 200,
-              child: LinearProgressIndicator(color: Colors.black, minHeight: 2),
+              child: SpinKitThreeBounce(color: Colors.black, size: 25),
             ),
           ],
         ),

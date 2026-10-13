@@ -3,12 +3,12 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:learning_course2/core/constants/colors_constants.dart';
 import 'package:learning_course2/providers/authentication_provider.dart';
-import 'package:learning_course2/screens/bottom_nav_bar_screen.dart';
+import 'package:learning_course2/screens/screen_bottom_nav.dart';
 
 import 'package:provider/provider.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class ScreenLogin extends StatelessWidget {
+  const ScreenLogin({super.key});
 
   @override
   Widget build(BuildContext context) {

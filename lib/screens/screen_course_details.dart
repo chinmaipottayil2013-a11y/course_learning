@@ -3,16 +3,16 @@ import 'package:learning_course2/core/constants/colors_constants.dart';
 import 'package:learning_course2/providers/course_details_provider.dart';
 import 'package:provider/provider.dart';
 
-class CourseDetailsScreen extends StatefulWidget {
+class ScreenCourseDetails extends StatefulWidget {
   final String slug;
 
-  const CourseDetailsScreen({super.key, required this.slug});
+  const ScreenCourseDetails({super.key, required this.slug});
 
   @override
-  State<CourseDetailsScreen> createState() => _CourseDetailsScreenState();
+  State<ScreenCourseDetails> createState() => _ScreenCourseDetailsState();
 }
 
-class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
+class _ScreenCourseDetailsState extends State<ScreenCourseDetails> {
   @override
   void initState() {
     super.initState();

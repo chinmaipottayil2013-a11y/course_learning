@@ -6,8 +6,7 @@ import 'package:learning_course2/providers/cart_provider.dart';
 import 'package:learning_course2/providers/course_details_provider.dart';
 
 import 'package:learning_course2/providers/homescreen_provider.dart';
-
-import 'package:learning_course2/screens/splash_screen.dart';
+import 'package:learning_course2/screens/screen_splash.dart';
 
 import 'package:provider/provider.dart';
 
@@ -33,7 +32,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(textTheme: GoogleFonts.outfitTextTheme()),
-      home: SplashScreen(),
+      home: ScreenSplash(),
     );
   }
 }

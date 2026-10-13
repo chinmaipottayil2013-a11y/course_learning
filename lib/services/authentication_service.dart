@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:http/http.dart' as apiclient;
 import 'package:http/http.dart' as http;
 import 'package:learning_course2/core/constants/api_constants.dart';
 import 'package:learning_course2/core/constants/string_constants.dart';
@@ -10,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthenticationService {
   Future<AuthenticationModel?> login(String email, String password) async {
     try {
-      final response = await http.post(
+      final response = await apiclient.post(
         Uri.parse(ApiConstants.loginUrl),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'email': email, 'password': password}),
@@ -49,6 +50,39 @@ class AuthenticationService {
     } catch (e) {
       log('Network Error: $e');
       return null;
+    }
+  }
+
+  Future<bool> refreshAccessToken() async {
+    try {
+      final refreshToken = await getRefreshToken();
+      if (refreshToken == null || refreshToken.isEmpty) {
+        log('Refresh token is empty');
+        return false;
+      }
+      final response = await http.post(
+        Uri.parse(ApiConstants.refreshUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'refresh_token': refreshToken}),
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final newAccessToken = data['access_token']?.toString() ?? '';
+        final newRefreshToken = data['refresh_token']?.toString();
+
+        if (newAccessToken.isEmpty) {
+          return false;
+        }
+        await _saveTokens(
+          newAccessToken,
+          newRefreshToken?.isNotEmpty == true ? newRefreshToken! : refreshToken,
+        );
+        return true;
+      }
+      return false;
+    } catch (e) {
+      log('Token refresh error : $e');
+      return false;
     }
   }
 

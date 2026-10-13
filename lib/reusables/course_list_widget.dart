@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:learning_course2/core/constants/colors_constants.dart';
 import 'package:learning_course2/models/course_model.dart';
 import 'package:learning_course2/providers/cart_provider.dart';
@@ -28,7 +29,7 @@ class ListWid extends StatelessWidget {
         border: Border.all(color: const Color(0xFFEAECF0), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.035),
+            color: Colors.black.withValues(alpha: 0.035),
             blurRadius: 14,
             offset: const Offset(0, 5),
           ),
@@ -62,10 +63,10 @@ class ListWid extends StatelessWidget {
                   return Container(
                     color: const Color(0xFFF2F4F7),
                     alignment: Alignment.center,
-                    child: const SizedBox(
+                    child: SizedBox(
                       width: 22,
                       height: 22,
-                      child: CircularProgressIndicator(strokeWidth: 2),
+                      child: SpinKitCircle(color: Colors.blue),
                     ),
                   );
                 },
@@ -97,12 +98,22 @@ class ListWid extends StatelessWidget {
 
                 Row(
                   children: [
-                    Text(
-                      "${courseModel.mrp}",
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: ColorsConstants.primary,
-                        fontWeight: FontWeight.bold,
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 11,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: ColorsConstants.containerColor,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        "₹ ${courseModel.mrp.toString().replaceAll(RegExp(r'\.0+$'), '')}",
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: ColorsConstants.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                     const Spacer(),
@@ -110,8 +121,8 @@ class ListWid extends StatelessWidget {
                       duration: const Duration(milliseconds: 200),
                       curve: Curves.easeInOut,
                       child: SizedBox(
-                        height: 36,
-                        child: ElevatedButton(
+                        height: 30,
+                        child: ElevatedButton.icon(
                           onPressed: isAdded
                               ? null
                               : () async {
@@ -122,6 +133,8 @@ class ListWid extends StatelessWidget {
                                   );
                                 },
                           style: ElevatedButton.styleFrom(
+                            minimumSize: Size.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             elevation: 0,
                             backgroundColor: isAdded
                                 ? const Color(0xFFE8F7EE)
@@ -141,20 +154,20 @@ class ListWid extends StatelessWidget {
                               ),
                             ),
                           ),
-                          child: Row(
+                          label: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(
                                 isAdded
                                     ? Icons.check_circle_rounded
                                     : Icons.add_shopping_cart_rounded,
-                                size: 16,
+                                size: 14,
                               ),
-                              const SizedBox(width: 6),
+                              const SizedBox(width: 4),
                               Text(
                                 isAdded ? 'Added' : 'Add to cart',
                                 style: const TextStyle(
-                                  fontSize: 11,
+                                  fontSize: 10,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
