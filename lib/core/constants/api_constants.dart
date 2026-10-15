@@ -10,5 +10,6 @@ class ApiConstants {
   static String get addToCarUrl => '${baseUrl}api/learning/add-to-cart/';
   static String get deleteFromCart =>
       '${baseUrl}api/learning/remove-from-cart/';
-  static String get refreshUrl => loginUrl;
+  static String get refreshUrl => '${baseUrl}user/token/refresh/';
+  static String get courseByRegionUrl => '${baseUrl}api/learning/all-regions/';
 }

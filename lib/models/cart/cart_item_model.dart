@@ -1,5 +1,5 @@
-import '../course_model.dart';
-import '../certificate_model.dart';
+import '../courses/course_model.dart';
+import '../courses/certificate_model.dart';
 
 class CartItemModel {
   final int id;

@@ -5,7 +5,9 @@ import 'package:http/http.dart' as apiclient;
 import 'package:http/http.dart' as http;
 import 'package:learning_course2/core/constants/api_constants.dart';
 import 'package:learning_course2/core/constants/string_constants.dart';
-import 'package:learning_course2/models/authentication_model.dart';
+import 'package:learning_course2/models/authentication/authentication_model.dart';
+import 'package:learning_course2/models/authentication/token_refresh_request_model.dart';
+import 'package:learning_course2/models/authentication/token_refresh_response_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthenticationService {
@@ -55,28 +57,46 @@ class AuthenticationService {
 
   Future<bool> refreshAccessToken() async {
     try {
-      final refreshToken = await getRefreshToken();
-      if (refreshToken == null || refreshToken.isEmpty) {
+      final currentRefreshToken = await getRefreshToken();
+      if (currentRefreshToken == null || currentRefreshToken.isEmpty) {
         log('Refresh token is empty');
         return false;
       }
+      log('Refreshing token using: ${ApiConstants.refreshUrl}');
+
+      final requestModel =
+          TokenRefreshRequestModel(refresh: currentRefreshToken);
       final response = await http.post(
         Uri.parse(ApiConstants.refreshUrl),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'refresh_token': refreshToken}),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode(requestModel.toJson()),
       );
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final newAccessToken = data['access_token']?.toString() ?? '';
-        final newRefreshToken = data['refresh_token']?.toString();
 
-        if (newAccessToken.isEmpty) {
+      log(
+        'Refresh response code: ${response.statusCode}, body: ${response.body}',
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data =
+            jsonDecode(response.body) as Map<String, dynamic>;
+        final refreshResponse = TokenRefreshResponseModel.fromJson(data);
+
+        if (refreshResponse.access.isEmpty) {
+          log('Refresh failed: new access token is empty');
           return false;
         }
-        await _saveTokens(
-          newAccessToken,
-          newRefreshToken?.isNotEmpty == true ? newRefreshToken! : refreshToken,
-        );
+
+        final newRefreshToken =
+            (refreshResponse.refresh != null &&
+                    refreshResponse.refresh!.isNotEmpty)
+                ? refreshResponse.refresh!
+                : currentRefreshToken;
+
+        await _saveTokens(refreshResponse.access, newRefreshToken);
+        log('Token refreshed and saved successfully');
         return true;
       }
       return false;
@@ -126,9 +146,11 @@ class AuthenticationService {
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
 
-    await prefs.remove(StringConstants.accessToken);
-    await prefs.remove(StringConstants.refreshToken);
+    await prefs.remove("accessToken");
+    await prefs.remove("refreshToken");
 
     await prefs.clear();
+    StringConstants.accessToken = '';
+    StringConstants.refreshToken = '';
   }
 }

@@ -1,18 +1,17 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:learning_course2/core/constants/api_constants.dart';
-import 'package:http/http.dart' as apiclient;
-import 'package:learning_course2/core/constants/string_constants.dart';
-import 'package:learning_course2/models/course_response_mode.dart';
-
-import 'package:learning_course2/models/filters_model.dart';
-import 'package:learning_course2/screens/screen_login.dart';
+import 'package:learning_course2/core/constants/network/auth_http_client.dart';
+import 'package:learning_course2/models/courses/course_response_model.dart';
+import 'package:learning_course2/models/courses/filters_model.dart';
+import 'package:learning_course2/models/courses/region_selection_model.dart';
 
 class CourseListService {
+  final ApiClient _client = ApiClient();
+
   Future<CourseResponseModel> getCourseList({
-    required BuildContext context,
+    BuildContext? context,
     int? page,
     int? pageSize,
     String? searchQuery,
@@ -33,7 +32,7 @@ class CourseListService {
     ).replace(queryParameters: {if (page != null) 'page': page.toString()});
 
     final Map<String, dynamic> body = {
-      'region': "3",
+      'region': region,
       if (pageSize != null) 'page_size': pageSize.toString(),
       if (searchQuery != null && searchQuery.isNotEmpty)
         'search_query': searchQuery,
@@ -53,27 +52,17 @@ class CourseListService {
       if (sortBy != null && sortBy.isNotEmpty) 'sort_by': sortBy,
     };
 
-    log('url is : $uri');
-    log('request body : ${jsonEncode(body)}');
+    // log('url is : $uri');
+    // log('request body : ${jsonEncode(body)}');
 
-    final response = await apiclient.post(
+    final response = await _client.post(
       uri,
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Authorization': 'Bearer ${StringConstants.accessToken}',
       },
-
       body: jsonEncode(body),
     );
-
-    log('Request URL: $uri');
-    log('Status Code: ${response.statusCode}');
-    log('Response Body: ${response.body}');
-    log('Response Headers: ${response.headers}');
-
-    // log('response body : ${response.body}');
-    // log('status code : ${response.statusCode}');
 
     if (response.statusCode == 404 && page != 1) {
       return CourseResponseModel(
@@ -81,13 +70,6 @@ class CourseListService {
         next: null,
         previous: null,
         results: [],
-      );
-    }
-
-    if (response.statusCode == 401) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const ScreenLogin()),
       );
     }
 
@@ -101,7 +83,7 @@ class CourseListService {
 
   Future<FiltersOptionsModel> getFilters() async {
     final uri = Uri.parse(ApiConstants.courseListUrl);
-    final response = await apiclient.get(
+    final response = await _client.get(
       uri,
       headers: {
         'Content-Type': 'application/json',
@@ -109,11 +91,21 @@ class CourseListService {
       },
     );
 
-    // log('Response of filters : ${response.body}');
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       return FiltersOptionsModel.fromJson(data);
     }
     throw Exception('Failed to load courses: ${response.statusCode}');
+  }
+
+  Future<List<RegionSelectionModel>> getListByRegion() async {
+    final uri = Uri.parse(ApiConstants.courseByRegionUrl);
+    final response = await _client.get(uri);
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+
+      return data.map((data) => RegionSelectionModel.fromJson(data)).toList();
+    }
+    throw Exception('Failed to load region data ${response.statusCode}');
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:learning_course2/models/course_details_model.dart';
+import 'package:learning_course2/models/courses/course_details_model.dart';
 import 'package:learning_course2/services/course_details_service.dart';
 
 class CourseDetailsProvider extends ChangeNotifier {
