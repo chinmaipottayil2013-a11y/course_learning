@@ -5,6 +5,7 @@ import 'package:learning_course2/providers/bottom_nav_bar_provider.dart';
 import 'package:learning_course2/providers/cart_provider.dart';
 import 'package:learning_course2/providers/course_details_provider.dart';
 
+import 'package:learning_course2/core/navigation/navigation_service.dart';
 import 'package:learning_course2/providers/homescreen_provider.dart';
 import 'package:learning_course2/screens/screen_splash.dart';
 
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: NavigationService.navigatorKey,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(textTheme: GoogleFonts.outfitTextTheme()),
       home: ScreenSplash(),

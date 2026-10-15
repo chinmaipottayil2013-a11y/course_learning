@@ -1,9 +1,10 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:learning_course2/models/course_model.dart';
-import 'package:learning_course2/models/course_response_mode.dart';
-import 'package:learning_course2/models/filters_model.dart';
+import 'package:learning_course2/models/courses/course_model.dart';
+import 'package:learning_course2/models/courses/course_response_model.dart';
+import 'package:learning_course2/models/courses/filters_model.dart';
+import 'package:learning_course2/models/courses/region_selection_model.dart';
 import 'package:learning_course2/services/course_list_service.dart';
 
 class HomescreenProvider extends ChangeNotifier {
@@ -16,12 +17,15 @@ class HomescreenProvider extends ChangeNotifier {
   int? selectedLevelId;
   int? selectedLanguageId;
   int? selectedIndustryId;
+  int? selectedRegionId;
+  String? selectedCountryCode;
 
   FiltersOptionsModel? _optionsModel;
   FiltersOptionsModel? get optionsModel => _optionsModel;
 
   bool isLoading = false;
   String? errorMessage;
+  bool isRegionLoading = false;
 
   int currentPage = 1;
   int pageSize = 10;
@@ -30,6 +34,9 @@ class HomescreenProvider extends ChangeNotifier {
 
   List<CourseModel> _courseModel = [];
   List<CourseModel> get courseModel => _courseModel;
+
+  List<RegionSelectionModel> _regionSelectionModel = [];
+  List<RegionSelectionModel> get regionSelectionModel => _regionSelectionModel;
 
   String query = '';
   String? _categoryId;
@@ -61,7 +68,7 @@ class HomescreenProvider extends ChangeNotifier {
         // log('Course details : ${courseResponseModel!.results}');
 
         // log("course length is ${courses.length}");
-        log("courseResponseModel!.count is ${courseResponseModel!.count}");
+        // log("courseResponseModel!.count is ${courseResponseModel!.count}");
         if (courseResponseModel!.count < pageSize) {
           hasMore = false;
         }
@@ -168,5 +175,32 @@ class HomescreenProvider extends ChangeNotifier {
       // log('after update: ${_courseModel[index].isCartAdded}');
       notifyListeners();
     }
+  }
+
+  Future<void> getRegions() async {
+    try {
+      isRegionLoading = true;
+      errorMessage = null;
+      _regionSelectionModel = await _courseListService.getListByRegion();
+      notifyListeners();
+    } catch (e) {
+      log(e.toString());
+    } finally {
+      isRegionLoading = false;
+      notifyListeners();
+    }
+  }
+
+  void selectedRegion(int id) {
+    selectedCategoryId = id;
+    final region = _regionSelectionModel.firstWhere((item) => item.id == id);
+    selectedCountryCode = region.countryCode;
+    notifyListeners();
+  }
+
+  Future<void> applyRegion(int id, BuildContext context) async {
+    selectedRegionId = id;
+    notifyListeners();
+    await getCourses(context: context);
   }
 }

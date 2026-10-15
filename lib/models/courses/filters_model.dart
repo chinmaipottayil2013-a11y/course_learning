@@ -1,8 +1,8 @@
-import 'package:learning_course2/models/course_details_model.dart';
-import 'package:learning_course2/models/institution_model.dart';
-import 'package:learning_course2/models/instructor_model.dart';
-import 'package:learning_course2/models/language_model.dart';
-import 'package:learning_course2/models/level_model.dart';
+import 'package:learning_course2/models/courses/course_details_model.dart';
+import 'package:learning_course2/models/courses/institution_model.dart';
+import 'package:learning_course2/models/courses/instructor_model.dart';
+import 'package:learning_course2/models/courses/language_model.dart';
+import 'package:learning_course2/models/courses/level_model.dart';
 
 class FiltersOptionsModel {
   final List<CategoryModel> category;

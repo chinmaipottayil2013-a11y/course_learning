@@ -1,6 +1,6 @@
-import 'package:learning_course2/models/provider_model.dart';
-import 'package:learning_course2/models/last_viewed_model.dart';
-import 'package:learning_course2/models/seo_model.dart'
+import 'package:learning_course2/models/courses/provider_model.dart';
+import 'package:learning_course2/models/courses/last_viewed_model.dart';
+import 'package:learning_course2/models/courses/seo_model.dart'
     hide LastViewedLectureModel, ProviderModel;
 
 class CourseDetailsModel {

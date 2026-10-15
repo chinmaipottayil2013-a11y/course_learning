@@ -1,4 +1,4 @@
-import 'package:learning_course2/models/course_model.dart';
+import 'package:learning_course2/models/courses/course_model.dart';
 
 class CourseResponseModel {
   final int count;

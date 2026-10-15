@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:learning_course2/core/constants/colors_constants.dart';
-import 'package:learning_course2/models/course_model.dart';
+import 'package:learning_course2/models/courses/course_model.dart';
 import 'package:learning_course2/providers/cart_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -9,17 +9,31 @@ class ListWid extends StatelessWidget {
   final CourseModel courseModel;
   final int number;
   final int region;
-
+  final String currency;
+  final double exchangeRate;
+  final String? currencySymbol;
   const ListWid({
     super.key,
     required this.courseModel,
     required this.number,
     required this.region,
+    required this.currency,
+    this.exchangeRate = 1,
+    this.currencySymbol,
   });
 
   @override
   Widget build(BuildContext context) {
     final bool isAdded = courseModel.isCartAdded;
+
+    final num baseMrp = num.tryParse(courseModel.mrp.toString()) ?? 0;
+    final double amount = baseMrp * exchangeRate;
+
+    final String amountText = amount.toStringAsFixed(amount % 1 == 0 ? 0 : 2);
+    final String label = (currencySymbol?.trim().isNotEmpty ?? false)
+        ? currencySymbol!
+        : currency;
+    final String price = '$label $amountText';
 
     return Container(
       padding: const EdgeInsets.all(12),
@@ -108,7 +122,7 @@ class ListWid extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        "₹ ${courseModel.mrp.toString().replaceAll(RegExp(r'\.0+$'), '')}",
+                        price,
                         style: TextStyle(
                           fontSize: 11,
                           color: ColorsConstants.primary,

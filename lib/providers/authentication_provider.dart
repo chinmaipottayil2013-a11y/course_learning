@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:learning_course2/models/authentication_model.dart';
+import 'package:learning_course2/models/authentication/authentication_model.dart';
 import 'package:learning_course2/services/authentication_service.dart';
 
 class AuthenticationProvider extends ChangeNotifier {
