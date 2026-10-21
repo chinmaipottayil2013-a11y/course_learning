@@ -11,9 +11,6 @@ class CartScreenWidget extends StatelessWidget {
   final int number;
   final int regionId;
   final RegionSelectionModel? regionSelectionModel;
-  // final String currency;
-  // final String? currencySymbol;
-  // final double exchangeRate;
 
   const CartScreenWidget({
     super.key,
@@ -21,10 +18,6 @@ class CartScreenWidget extends StatelessWidget {
     required this.number,
     required this.regionId,
     this.regionSelectionModel,
-
-    // required this.currency,
-    // this.currencySymbol,
-    // this.exchangeRate = 1.0,
   });
 
   @override

@@ -6,6 +6,7 @@ import 'package:learning_course2/providers/cart_provider.dart';
 import 'package:learning_course2/providers/course_details_provider.dart';
 
 import 'package:learning_course2/core/navigation/navigation_service.dart';
+import 'package:learning_course2/providers/favourite_screen_provider.dart';
 import 'package:learning_course2/providers/homescreen_provider.dart';
 import 'package:learning_course2/screens/screen_splash.dart';
 
@@ -20,6 +21,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => AuthenticationProvider()),
         ChangeNotifierProvider(create: (_) => BottomNavBarProvider()),
         ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProvider(create: (_) => FavouriteScreenProvider()),
       ],
       child: MyApp(),
     ),

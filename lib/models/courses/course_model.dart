@@ -10,7 +10,7 @@ class CourseModel {
   final double mrp;
   final String totalHour;
   final String level;
-  final bool isFavourite;
+  bool isFavourite;
   bool isCartAdded;
   final double averageReview;
   final double completedPercentage;

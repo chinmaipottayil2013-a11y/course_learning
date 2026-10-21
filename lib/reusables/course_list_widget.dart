@@ -4,6 +4,7 @@ import 'package:learning_course2/core/constants/colors_constants.dart';
 import 'package:learning_course2/models/courses/course_model.dart';
 import 'package:learning_course2/models/courses/region_selection_model.dart';
 import 'package:learning_course2/providers/cart_provider.dart';
+import 'package:learning_course2/providers/favourite_screen_provider.dart';
 import 'package:provider/provider.dart';
 
 class ListWid extends StatelessWidget {
@@ -11,23 +12,21 @@ class ListWid extends StatelessWidget {
   final int number;
   final int region;
   final RegionSelectionModel? regionSelectionModel;
-  // final String currency;
-  // final double exchangeRate;
-  // final String? currencySymbol;
+
   const ListWid({
     super.key,
     required this.courseModel,
     required this.number,
     required this.region,
     this.regionSelectionModel,
-    // required this.currency,
-    // this.exchangeRate = 1,
-    // this.currencySymbol,
   });
 
   @override
   Widget build(BuildContext context) {
+    context.watch<FavouriteScreenProvider>();
+
     final bool isAdded = courseModel.isCartAdded;
+    final bool isFavourite = courseModel.isFavourite;
 
     final double rate = regionSelectionModel?.exchangeRate ?? 1;
     final String currency = regionSelectionModel?.currency ?? 'INR';
@@ -138,6 +137,19 @@ class ListWid extends StatelessWidget {
                       ),
                     ),
                     const Spacer(),
+                    IconButton(
+                      onPressed: isFavourite
+                          ? null
+                          : () async {
+                              await context
+                                  .read<FavouriteScreenProvider>()
+                                  .addToFavourite(course: courseModel);
+                            },
+                      icon: Icon(
+                        isFavourite ? Icons.favorite : Icons.favorite_border,
+                        color: isFavourite ? Colors.black : Colors.black26,
+                      ),
+                    ),
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
                       curve: Curves.easeInOut,
