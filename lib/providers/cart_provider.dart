@@ -45,11 +45,13 @@ class CartProvider extends ChangeNotifier {
     required int courseId,
     required int region,
     required BuildContext context,
+    required String currency,
   }) async {
     try {
       final response = await _cartService.addCourse(
         courseId: courseId,
         region: region,
+        currency: currency,
       );
 
       // log('response in the cart provider $response');

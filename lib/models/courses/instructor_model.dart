@@ -27,9 +27,9 @@ class InstructorModel {
 
   factory InstructorModel.fromJson(Map<String, dynamic> json) {
     return InstructorModel(
-      id: json['id'],
-      name: json['name'],
-      slug: json['slug'],
+      id: json['id'] ?? 0,
+      name: json['name'] ?? '',
+      slug: json['slug'] ?? '',
       image: json['image'],
       profileImage: json['profile_image'],
       bio: json['bio'],

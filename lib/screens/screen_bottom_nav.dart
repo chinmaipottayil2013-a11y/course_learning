@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:learning_course2/providers/bottom_nav_bar_provider.dart';
 import 'package:learning_course2/screens/screen_cart.dart';
 import 'package:learning_course2/screens/screen_home.dart';
@@ -9,7 +10,7 @@ class BottomNavBarScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screens = [const ScreenHome(), const ScreenCart()];
+    final screens = [const ScreenHome(), ScreenCart()];
     final bottomNavProvider = context.watch<BottomNavBarProvider>();
     return Scaffold(
       body: screens[bottomNavProvider.currentIndex],

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:learning_course2/core/constants/colors_constants.dart';
 import 'package:learning_course2/models/cart/cart_item_model.dart';
+import 'package:learning_course2/models/courses/region_selection_model.dart';
+
 import 'package:learning_course2/providers/cart_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -8,18 +10,38 @@ class CartScreenWidget extends StatelessWidget {
   final CartItemModel cartItemModel;
   final int number;
   final int regionId;
+  final RegionSelectionModel? regionSelectionModel;
+  // final String currency;
+  // final String? currencySymbol;
+  // final double exchangeRate;
 
   const CartScreenWidget({
     super.key,
     required this.cartItemModel,
     required this.number,
     required this.regionId,
+    this.regionSelectionModel,
+
+    // required this.currency,
+    // this.currencySymbol,
+    // this.exchangeRate = 1.0,
   });
 
   @override
   Widget build(BuildContext context) {
     final course = cartItemModel.course;
     final String imageUrl = course.image;
+
+    final String currency = regionSelectionModel?.currency ?? 'INR';
+    final String? symbol = regionSelectionModel?.currencySymbol;
+
+    final num amount = num.tryParse(course.mrp.toString()) ?? 0;
+
+    final String amountText = amount.toStringAsFixed(amount % 1 == 0 ? 0 : 2);
+    final String label = (symbol?.trim().isNotEmpty ?? false)
+        ? symbol!
+        : currency;
+    final String price = '$label $amountText';
 
     return Container(
       padding: const EdgeInsets.all(12),
@@ -123,7 +145,7 @@ class CartScreenWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    '₹${course.mrp}',
+                    price,
                     style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
