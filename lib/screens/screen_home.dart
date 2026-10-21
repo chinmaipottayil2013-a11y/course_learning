@@ -622,8 +622,7 @@ class _HomescreenState extends State<ScreenHome> {
                               number: index + 1,
                               region: homeScreenProvider.selectedRegionId ?? 3,
                               // Fall back to INR defaults until regions load
-                              currency: selectedRegion?.currency ?? 'INR',
-                              exchangeRate: selectedRegion?.exchangeRate ?? 1.0,
+                              regionSelectionModel: selectedRegion,
                             ),
                           ),
                         );

@@ -147,8 +147,8 @@ class HomescreenProvider extends ChangeNotifier {
     try {
       _optionsModel = await _courseListService.getFilters();
       notifyListeners();
-    } catch (e) {
-      log('Loading failed $e');
+    } catch (e, st) {
+      log('Loading failed $e', stackTrace: st);
     }
   }
 

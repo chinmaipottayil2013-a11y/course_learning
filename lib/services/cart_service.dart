@@ -28,7 +28,11 @@ class CartService {
   }
 
   // COURSE TO CART ADDING SERVICE
-  Future<bool> addCourse({required int courseId, required int region}) async {
+  Future<bool> addCourse({
+    required int courseId,
+    required int region,
+    required String currency,
+  }) async {
     final uri = Uri.parse(ApiConstants.addToCarUrl);
     final body = {'course_id': courseId, 'region': region};
 

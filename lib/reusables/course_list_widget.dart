@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:learning_course2/core/constants/colors_constants.dart';
 import 'package:learning_course2/models/courses/course_model.dart';
+import 'package:learning_course2/models/courses/region_selection_model.dart';
 import 'package:learning_course2/providers/cart_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -9,29 +10,35 @@ class ListWid extends StatelessWidget {
   final CourseModel courseModel;
   final int number;
   final int region;
-  final String currency;
-  final double exchangeRate;
-  final String? currencySymbol;
+  final RegionSelectionModel? regionSelectionModel;
+  // final String currency;
+  // final double exchangeRate;
+  // final String? currencySymbol;
   const ListWid({
     super.key,
     required this.courseModel,
     required this.number,
     required this.region,
-    required this.currency,
-    this.exchangeRate = 1,
-    this.currencySymbol,
+    this.regionSelectionModel,
+    // required this.currency,
+    // this.exchangeRate = 1,
+    // this.currencySymbol,
   });
 
   @override
   Widget build(BuildContext context) {
     final bool isAdded = courseModel.isCartAdded;
 
+    final double rate = regionSelectionModel?.exchangeRate ?? 1;
+    final String currency = regionSelectionModel?.currency ?? 'INR';
+    final String? symbol = regionSelectionModel?.currencySymbol;
+
     final num baseMrp = num.tryParse(courseModel.mrp.toString()) ?? 0;
-    final double amount = baseMrp * exchangeRate;
+    final double amount = baseMrp * rate;
 
     final String amountText = amount.toStringAsFixed(amount % 1 == 0 ? 0 : 2);
-    final String label = (currencySymbol?.trim().isNotEmpty ?? false)
-        ? currencySymbol!
+    final String label = (symbol?.trim().isNotEmpty ?? false)
+        ? symbol!
         : currency;
     final String price = '$label $amountText';
 
@@ -144,6 +151,7 @@ class ListWid extends StatelessWidget {
                                     courseId: courseModel.id,
                                     region: region,
                                     context: context,
+                                    currency: currency,
                                   );
                                 },
                           style: ElevatedButton.styleFrom(

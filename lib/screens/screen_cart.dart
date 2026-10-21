@@ -3,6 +3,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:learning_course2/core/constants/colors_constants.dart';
 
 import 'package:learning_course2/providers/cart_provider.dart';
+import 'package:learning_course2/providers/homescreen_provider.dart';
 import 'package:learning_course2/reusables/cart_screen_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -19,19 +20,29 @@ class _ScreenCartState extends State<ScreenCart> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<CartProvider>().getCartItems(regionId: 1, context: context);
+      final regionId = context.read<HomescreenProvider>().selectedRegionId ?? 3;
+      context.read<CartProvider>().getCartItems(
+        regionId: regionId,
+        context: context,
+      );
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final cartScreenProvider = context.watch<CartProvider>();
+    final homeProvider = context.watch<HomescreenProvider>();
+    final regionId = homeProvider.selectedRegionId ?? 3;
+    final selectedRegion = homeProvider.regionSelectionModel
+        .where((r) => r.id == homeProvider.selectedRegionId)
+        .firstOrNull;
 
     return Scaffold(
       backgroundColor: ColorsConstants.background,
 
       appBar: AppBar(
         centerTitle: true,
+
         title: const Text(
           'Your Courses',
           style: TextStyle(
@@ -95,7 +106,8 @@ class _ScreenCartState extends State<ScreenCart> {
                     return CartScreenWidget(
                       cartItemModel: item,
                       number: index + 1,
-                      regionId: 1,
+                      regionId: regionId,
+                      regionSelectionModel: selectedRegion,
                     );
                   },
                 ),
