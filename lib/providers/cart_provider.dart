@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:learning_course2/models/cart/add_to_cart_model.dart';
+
 import 'package:learning_course2/models/cart/cart_model.dart';
-import 'package:learning_course2/models/cart/remove_from_cart_model.dart';
+
 import 'package:learning_course2/providers/homescreen_provider.dart';
 
 import 'package:learning_course2/services/cart_service.dart';
@@ -11,12 +11,6 @@ class CartProvider extends ChangeNotifier {
   final CartService _cartService = CartService();
 
   CartModel? _cartModel;
-  AddToCartRequestModel? _addToCartRequestModel;
-  AddToCartRequestModel? get addToCartRequestModel => _addToCartRequestModel;
-
-  RemoveFromCartRequestModel? _removeFromCartRequestModel;
-  RemoveFromCartRequestModel? get removeFromCartRequestModel =>
-      _removeFromCartRequestModel;
 
   CartModel? get cartModel => _cartModel;
 

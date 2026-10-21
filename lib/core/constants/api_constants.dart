@@ -12,4 +12,8 @@ class ApiConstants {
       '${baseUrl}api/learning/remove-from-cart/';
   static String get refreshUrl => '${baseUrl}user/token/refresh/';
   static String get courseByRegionUrl => '${baseUrl}api/learning/all-regions/';
+  static String get addToFavouriteUrl =>
+      '${baseUrl}api/learning/add-to-favourite/';
+  static String get showFavouriteUrl =>
+      '${baseUrl}api/learning/favourites-list/';
 }
