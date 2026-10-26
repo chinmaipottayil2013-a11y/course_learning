@@ -60,6 +60,7 @@ class HomescreenProvider extends ChangeNotifier {
         levelId: _levelId,
         languageId: _languageId,
         industryId: _industryId,
+        region: selectedRegionId?.toString(),
         context: context,
       );
       _courseResponseModel = courses;
@@ -96,6 +97,7 @@ class HomescreenProvider extends ChangeNotifier {
         levelId: _levelId,
         languageId: _languageId,
         industryId: _industryId,
+        region: selectedRegionId?.toString(),
         context: context,
       );
       _courseModel.addAll(newCourses.results);
@@ -200,6 +202,10 @@ class HomescreenProvider extends ChangeNotifier {
 
   Future<void> applyRegion(int id, BuildContext context) async {
     selectedRegionId = id;
+    selectedCountryCode = _regionSelectionModel
+        .where((r) => r.id == id)
+        .firstOrNull
+        ?.countryCode;
     notifyListeners();
     await getCourses(context: context);
   }

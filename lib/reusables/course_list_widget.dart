@@ -28,19 +28,6 @@ class ListWid extends StatelessWidget {
     final bool isAdded = courseModel.isCartAdded;
     final bool isFavourite = courseModel.isFavourite;
 
-    final double rate = regionSelectionModel?.exchangeRate ?? 1;
-    final String currency = regionSelectionModel?.currency ?? 'INR';
-    final String? symbol = regionSelectionModel?.currencySymbol;
-
-    final num baseMrp = num.tryParse(courseModel.mrp.toString()) ?? 0;
-    final double amount = baseMrp * rate;
-
-    final String amountText = amount.toStringAsFixed(amount % 1 == 0 ? 0 : 2);
-    final String label = (symbol?.trim().isNotEmpty ?? false)
-        ? symbol!
-        : currency;
-    final String price = '$label $amountText';
-
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -128,7 +115,7 @@ class ListWid extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        price,
+                        '${regionSelectionModel?.currency ?? 'INR'} ${courseModel.salePrice}',
                         style: TextStyle(
                           fontSize: 11,
                           color: ColorsConstants.primary,
@@ -147,7 +134,7 @@ class ListWid extends StatelessWidget {
                             },
                       icon: Icon(
                         isFavourite ? Icons.favorite : Icons.favorite_border,
-                        color: isFavourite ? Colors.black : Colors.black26,
+                        color: Colors.red,
                       ),
                     ),
                     AnimatedContainer(
@@ -163,7 +150,8 @@ class ListWid extends StatelessWidget {
                                     courseId: courseModel.id,
                                     region: region,
                                     context: context,
-                                    currency: currency,
+                                    currency:
+                                        regionSelectionModel?.currency ?? 'INR',
                                   );
                                 },
                           style: ElevatedButton.styleFrom(

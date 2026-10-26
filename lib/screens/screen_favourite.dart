@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:learning_course2/core/constants/colors_constants.dart';
 import 'package:learning_course2/providers/favourite_screen_provider.dart';
+import 'package:learning_course2/providers/homescreen_provider.dart';
+import 'package:learning_course2/reusables/favourite_screen_widget.dart';
 import 'package:provider/provider.dart';
 
 class ScreenFavourite extends StatefulWidget {
@@ -25,6 +27,12 @@ class _ScreenFavouriteState extends State<ScreenFavourite> {
   Widget build(BuildContext context) {
     final favouriteProvider = context.watch<FavouriteScreenProvider>();
     final courses = favouriteProvider.courseModel;
+
+    final homeProvider = context.watch<HomescreenProvider>();
+
+    final selectedRegion = homeProvider.regionSelectionModel
+        .where((r) => r.id == homeProvider.selectedRegionId)
+        .firstOrNull;
 
     return Scaffold(
       appBar: AppBar(
@@ -85,16 +93,16 @@ class _ScreenFavouriteState extends State<ScreenFavourite> {
             // 4. the list
             else
               Expanded(
-                child: ListView.builder(
+                child: ListView.separated(
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 8),
                   itemCount: courses.length,
                   itemBuilder: (context, index) {
                     final course = courses[index];
-                    return Card(
-                      child: ListTile(
-                        title: Text(
-                          course.name,
-                        ), // change to your real field name
-                      ),
+                    return FavouriteScreenWidget(
+                      courseModel: course,
+                      number: index + 1,
+                      regionSelectionModel: selectedRegion,
                     );
                   },
                 ),

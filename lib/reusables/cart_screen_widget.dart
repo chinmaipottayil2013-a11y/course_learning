@@ -25,17 +25,6 @@ class CartScreenWidget extends StatelessWidget {
     final course = cartItemModel.course;
     final String imageUrl = course.image;
 
-    final String currency = regionSelectionModel?.currency ?? 'INR';
-    final String? symbol = regionSelectionModel?.currencySymbol;
-
-    final num amount = num.tryParse(course.mrp.toString()) ?? 0;
-
-    final String amountText = amount.toStringAsFixed(amount % 1 == 0 ? 0 : 2);
-    final String label = (symbol?.trim().isNotEmpty ?? false)
-        ? symbol!
-        : currency;
-    final String price = '$label $amountText';
-
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -138,7 +127,7 @@ class CartScreenWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    price,
+                    '${regionSelectionModel?.currency ?? 'INR'} ${course.salePrice}',
                     style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,

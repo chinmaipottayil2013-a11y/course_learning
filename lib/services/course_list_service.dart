@@ -32,7 +32,6 @@ class CourseListService {
     ).replace(queryParameters: {if (page != null) 'page': page.toString()});
 
     final Map<String, dynamic> body = {
-      'region': region,
       if (pageSize != null) 'page_size': pageSize.toString(),
       if (searchQuery != null && searchQuery.isNotEmpty)
         'search_query': searchQuery,
