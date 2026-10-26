@@ -38,4 +38,15 @@ class FavouriteScreenProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> removeFromFavourite({required CourseModel course}) async {
+    try {
+      await _favouritesService.addToFavourite(courseId: course.id);
+      course.isFavourite = false;
+      _courseModel.removeWhere((c) => c.id == course.id);
+    } catch (e) {
+      errorMessage = e.toString();
+    }
+    notifyListeners();
+  }
 }

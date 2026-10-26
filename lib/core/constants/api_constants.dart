@@ -16,4 +16,6 @@ class ApiConstants {
       '${baseUrl}api/learning/add-to-favourite/';
   static String get showFavouriteUrl =>
       '${baseUrl}api/learning/favourites-list/';
+  static String get paymentUrl =>
+      '${baseUrl}api/payments/learning/payment-request/';
 }

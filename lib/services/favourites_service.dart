@@ -16,7 +16,8 @@ class FavouritesService {
     final response = await _client.get(uri);
     log('Show status code : ${response.statusCode}');
     if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(response.body);
+      final decoded = jsonDecode(response.body);
+      final List<dynamic> data = decoded is List ? decoded : decoded['results'];
 
       return data.map((data) => CourseModel.fromJson(data)).toList();
     } else {
