@@ -9,14 +9,12 @@ import 'package:provider/provider.dart';
 
 class ListWid extends StatelessWidget {
   final CourseModel courseModel;
-  final int number;
   final int region;
   final RegionSelectionModel? regionSelectionModel;
 
   const ListWid({
     super.key,
     required this.courseModel,
-    required this.number,
     required this.region,
     this.regionSelectionModel,
   });
@@ -27,181 +25,205 @@ class ListWid extends StatelessWidget {
 
     final bool isAdded = courseModel.isCartAdded;
     final bool isFavourite = courseModel.isFavourite;
+    final String currency = regionSelectionModel?.currency ?? 'INR';
 
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xFFEAECF0), width: 1),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFEAECF0)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.035),
-            blurRadius: 14,
-            offset: const Offset(0, 5),
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(14),
-            child: SizedBox(
-              width: 88,
-              height: 92,
-              child: Image.network(
-                courseModel.image,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
+          SizedBox(
+            height: 100,
+            width: double.infinity,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: SizedBox(
+                width: double.infinity,
+                child: Image.network(
+                  courseModel.image,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, _, _) => Container(
                     color: const Color(0xFFF2F4F7),
                     alignment: Alignment.center,
                     child: const Icon(
                       Icons.menu_book_rounded,
-                      size: 30,
+                      size: 28,
                       color: Color(0xFF98A2B3),
                     ),
-                  );
-                },
-                loadingBuilder: (context, child, progress) {
-                  if (progress == null) return child;
-
-                  return Container(
-                    color: const Color(0xFFF2F4F7),
-                    alignment: Alignment.center,
-                    child: SizedBox(
-                      width: 22,
-                      height: 22,
-                      child: SpinKitCircle(color: Colors.blue),
-                    ),
-                  );
-                },
+                  ),
+                  loadingBuilder: (_, child, progress) {
+                    if (progress == null) return child;
+                    return Container(
+                      color: const Color(0xFFF2F4F7),
+                      alignment: Alignment.center,
+                      child: const SpinKitCircle(color: Colors.blue, size: 20),
+                    );
+                  },
+                ),
               ),
             ),
           ),
 
-          const SizedBox(width: 14),
+          const SizedBox(height: 10),
 
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  courseModel.name,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    height: 1.35,
-                    letterSpacing: -0.25,
-                    color: Color(0xFF101828),
+          Row(
+            children: [
+              const Icon(Icons.access_time_sharp, size: 15),
+              const SizedBox(width: 2),
+              Text(
+                '${courseModel.totalHour} hr',
+                style: const TextStyle(color: Colors.black54, fontSize: 13),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 5),
+
+          SizedBox(
+            height: 40,
+            child: Text(
+              courseModel.name,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.2,
+                color: Color(0xFF101828),
+                height: 1.3,
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 6),
+
+          const Divider(thickness: 0.8, indent: 8, endIndent: 8),
+
+          const SizedBox(height: 3),
+
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: ColorsConstants.containerColor,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '$currency ${courseModel.salePrice}',
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: ColorsConstants.primary,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-
-                const SizedBox(height: 12),
-
-                Row(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 11,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: ColorsConstants.containerColor,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        '${regionSelectionModel?.currency ?? 'INR'} ${courseModel.salePrice}',
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: ColorsConstants.primary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                    const Spacer(),
-                    IconButton(
-                      onPressed: isFavourite
-                          ? null
-                          : () async {
-                              await context
-                                  .read<FavouriteScreenProvider>()
-                                  .addToFavourite(course: courseModel);
-                            },
-                      icon: Icon(
-                        isFavourite ? Icons.favorite : Icons.favorite_border,
-                        color: Colors.red,
-                      ),
-                    ),
-                    AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      curve: Curves.easeInOut,
-                      child: SizedBox(
-                        height: 30,
-                        child: ElevatedButton.icon(
-                          onPressed: isAdded
-                              ? null
-                              : () async {
-                                  await context.read<CartProvider>().addToCart(
-                                    courseId: courseModel.id,
-                                    region: region,
-                                    context: context,
-                                    currency:
-                                        regionSelectionModel?.currency ?? 'INR',
-                                  );
-                                },
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: Size.zero,
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            elevation: 0,
-                            backgroundColor: isAdded
-                                ? const Color(0xFFE8F7EE)
-                                : ColorsConstants.primary,
-                            foregroundColor: isAdded
-                                ? const Color(0xFF16834A)
-                                : Colors.white,
-                            disabledBackgroundColor: const Color(0xFFE8F7EE),
-                            disabledForegroundColor: const Color(0xFF16834A),
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              side: BorderSide(
-                                color: isAdded
-                                    ? const Color(0xFFC5EBD3)
-                                    : Colors.transparent,
-                              ),
-                            ),
-                          ),
-                          label: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                isAdded
-                                    ? Icons.check_circle_rounded
-                                    : Icons.add_shopping_cart_rounded,
-                                size: 14,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                isAdded ? 'Added' : 'Add to cart',
-                                style: const TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+              ),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  '$currency ${courseModel.mrp.toStringAsFixed(2)}',
+                  style: TextStyle(
+                    fontSize: 8,
+                    color: Colors.black54,
+                    decoration: TextDecoration.lineThrough,
+                  ),
                 ),
-              ],
-            ),
+              ),
+            ],
+          ),
+
+          const Spacer(),
+
+          // Add and Favourite buttons
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: SizedBox(
+                  height: 34,
+                  child: ElevatedButton.icon(
+                    onPressed: isAdded
+                        ? null
+                        : () => context.read<CartProvider>().addToCart(
+                            courseId: courseModel.id,
+                            region: region,
+                            context: context,
+                            currency: currency,
+                          ),
+                    icon: Icon(
+                      isAdded
+                          ? Icons.check_circle_rounded
+                          : Icons.add_shopping_cart_rounded,
+                      size: 13,
+                    ),
+                    label: Text(
+                      isAdded ? 'Added' : 'Add',
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      backgroundColor: ColorsConstants.primary,
+                      foregroundColor: Colors.white,
+                      disabledBackgroundColor: const Color(0xFFE8F7EE),
+                      disabledForegroundColor: const Color(0xFF16834A),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                        side: BorderSide(
+                          color: isAdded
+                              ? const Color(0xFFC5EBD3)
+                              : Colors.transparent,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(width: 8),
+
+              SizedBox(
+                width: 34,
+                height: 34,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.red.withValues(alpha: 0.15),
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                    onPressed: isFavourite
+                        ? null
+                        : () => context
+                              .read<FavouriteScreenProvider>()
+                              .addToFavourite(course: courseModel),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints.expand(),
+                    iconSize: 16,
+                    icon: Icon(
+                      isFavourite ? Icons.favorite : Icons.favorite_border,
+                      color: Colors.red,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

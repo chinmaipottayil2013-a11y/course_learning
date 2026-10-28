@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:learning_course2/core/constants/colors_constants.dart';
 import 'package:learning_course2/providers/authentication_provider.dart';
+
 import 'package:learning_course2/providers/homescreen_provider.dart';
 import 'package:learning_course2/reusables/course_list_widget.dart';
 import 'package:learning_course2/screens/screen_login.dart';
@@ -101,7 +102,7 @@ class _HomescreenState extends State<ScreenHome> {
                   child: Text(
                     region.name,
                     style: const TextStyle(
-                      fontSize: 14,
+                      fontSize: 13,
                       fontWeight: FontWeight.w500,
                       color: ColorsConstants.textColor,
                     ),
@@ -133,7 +134,7 @@ class _HomescreenState extends State<ScreenHome> {
         Text(
           heading,
           style: const TextStyle(
-            fontSize: 15,
+            fontSize: 14,
             fontWeight: FontWeight.w600,
             color: ColorsConstants.textColor,
           ),
@@ -167,7 +168,7 @@ class _HomescreenState extends State<ScreenHome> {
                     ? ColorsConstants.primary
                     : ColorsConstants.textColor,
                 fontWeight: FontWeight.w500,
-                fontSize: 13,
+                fontSize: 12,
               ),
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
             );
@@ -384,7 +385,7 @@ class _HomescreenState extends State<ScreenHome> {
           'Course Learning',
           style: TextStyle(
             fontWeight: FontWeight.w700,
-            fontSize: 23,
+            fontSize: 22,
             color: ColorsConstants.textColor,
             letterSpacing: -0.5,
           ),
@@ -438,7 +439,7 @@ class _HomescreenState extends State<ScreenHome> {
                               homeScreenProvider.getCourses(context: context);
                             },
                             style: const TextStyle(
-                              fontSize: 14,
+                              fontSize: 13,
                               color: ColorsConstants.textColor,
                             ),
                             decoration: InputDecoration(
@@ -461,7 +462,7 @@ class _HomescreenState extends State<ScreenHome> {
                               hintText: 'Search your course...',
                               hintStyle: const TextStyle(
                                 color: ColorsConstants.secondaryText,
-                                fontSize: 14,
+                                fontSize: 13,
                               ),
                               border: InputBorder.none,
                               enabledBorder: InputBorder.none,
@@ -515,7 +516,7 @@ class _HomescreenState extends State<ScreenHome> {
                         'Available Courses',
                         style: TextStyle(
                           fontWeight: FontWeight.w700,
-                          fontSize: 19,
+                          fontSize: 18,
                           color: ColorsConstants.textColor,
                           letterSpacing: -0.4,
                         ),
@@ -533,7 +534,7 @@ class _HomescreenState extends State<ScreenHome> {
                         child: Text(
                           '${homeScreenProvider.courseResponseModel?.count ?? 0} Courses',
                           style: const TextStyle(
-                            fontSize: 12,
+                            fontSize: 11,
                             fontWeight: FontWeight.w600,
                             color: ColorsConstants.primary,
                           ),
@@ -582,52 +583,49 @@ class _HomescreenState extends State<ScreenHome> {
                       ),
                     )
                   else
-                    ListView.separated(
+                    GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount:
-                          homeScreenProvider.courseModel.length +
-                          (homeScreenProvider.isLoadingMore ? 1 : 0),
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(height: 4),
+                      itemCount: homeScreenProvider.courseModel.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 12,
+                            crossAxisSpacing: 12,
+                            childAspectRatio: 0.72,
+                            mainAxisExtent: 300,
+                          ),
                       itemBuilder: (context, index) {
-                        if (index == homeScreenProvider.courseModel.length) {
-                          return Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Center(
-                              child: SpinKitThreeBounce(
-                                color: Colors.blue.shade900,
-                                size: 28,
-                              ),
-                            ),
-                          );
-                        }
-
                         final course = homeScreenProvider.courseModel[index];
 
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 5),
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) =>
-                                      ScreenCourseDetails(slug: course.slug),
-                                ),
-                              );
-                            },
-                            child: ListWid(
-                              courseModel: course,
-                              number: index + 1,
-                              region: homeScreenProvider.selectedRegionId ?? 3,
-                              // Fall back to INR defaults until regions load
-                              regionSelectionModel: selectedRegion,
-                            ),
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ScreenCourseDetails(slug: course.slug),
+                              ),
+                            );
+                          },
+                          child: ListWid(
+                            courseModel: course,
+                            region: homeScreenProvider.selectedRegionId ?? 3,
+                            regionSelectionModel: selectedRegion,
                           ),
                         );
                       },
                     ),
+                  if (homeScreenProvider.isLoadingMore)
+                    (Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Center(
+                        child: SpinKitThreeBounce(
+                          color: Colors.blue.shade900,
+                          size: 20,
+                        ),
+                      ),
+                    )),
                 ],
               ),
             ),

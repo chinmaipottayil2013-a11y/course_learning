@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 class FavouriteScreenWidget extends StatelessWidget {
   final CourseModel courseModel;
   final RegionSelectionModel? regionSelectionModel;
-  final int number;
+  final int number; // kept so existing callers don't break (no longer shown)
   const FavouriteScreenWidget({
     super.key,
     this.regionSelectionModel,
@@ -25,129 +25,118 @@ class FavouriteScreenWidget extends StatelessWidget {
     final String imageUrl = course.image;
 
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border.all(color: const Color(0xFFE6E8F0)),
-        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0xFFEAECF0)),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: const [
           BoxShadow(
-            color: Color(0x0D101828),
-            blurRadius: 20,
-            offset: Offset(0, 8),
+            color: Color(0x0A101828),
+            blurRadius: 16,
+            offset: Offset(0, 4),
           ),
         ],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: SizedBox(
-                  width: 92,
-                  height: 92,
-                  child: (imageUrl.isEmpty)
-                      ? _placeholder()
-                      : Image.network(
-                          imageUrl,
-                          fit: BoxFit.cover,
-
-                          loadingBuilder: (_, child, progress) =>
-                              progress == null
-                              ? child
-                              : Container(
-                                  color: ColorsConstants.containerColor,
-                                  alignment: Alignment.center,
-                                  child: const SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
-                                  ),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(13),
+            child: SizedBox(
+              width: 84,
+              height: 84,
+              child: imageUrl.isEmpty
+                  ? _placeholder()
+                  : Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (_, child, progress) => progress == null
+                          ? child
+                          : Container(
+                              color: ColorsConstants.containerColor,
+                              alignment: Alignment.center,
+                              child: const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: ColorsConstants.primary,
                                 ),
-                          errorBuilder: (_, _, _) => _placeholder(),
-                        ),
-                ),
-              ),
-              Positioned(
-                top: 6,
-                left: 6,
-                child: Container(
-                  height: 24,
-                  width: 24,
-                  alignment: Alignment.center,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white,
-                  ),
-                  child: Text(
-                    '$number',
-                    style: const TextStyle(
-                      color: ColorsConstants.primary,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                      errorBuilder: (_, _, _) => _placeholder(),
                     ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
-          const SizedBox(width: 14),
 
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  course.name,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    height: 1.3,
-                    letterSpacing: -0.2,
-                    color: ColorsConstants.textColor,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(12, 4, 6, 4),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    course.name,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 14.5,
+                      fontWeight: FontWeight.w700,
+                      height: 1.3,
+                      letterSpacing: -0.2,
+                      color: ColorsConstants.textColor,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: ColorsConstants.containerColor,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        '${regionSelectionModel?.currency ?? 'INR'} ${course.salePrice}',
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                          color: ColorsConstants.primary,
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: ColorsConstants.containerColor,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          '${regionSelectionModel?.currency ?? 'INR'} ${course.salePrice}',
+                          style: const TextStyle(
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w700,
+                            color: ColorsConstants.primary,
+                          ),
                         ),
                       ),
-                    ),
-                    const Spacer(),
-                    IconButton(
-                      onPressed: () async {
-                        log('HEART TAPPED: ${courseModel.id}');
-                        await context
-                            .read<FavouriteScreenProvider>()
-                            .removeFromFavourite(course: courseModel);
-                      },
-                      icon: Icon(Icons.favorite, color: Colors.red),
-                    ),
-                  ],
-                ),
-              ],
+                      const Spacer(),
+
+                      IconButton(
+                        onPressed: () async {
+                          log('HEART TAPPED: ${courseModel.id}');
+                          await context
+                              .read<FavouriteScreenProvider>()
+                              .removeFromFavourite(course: courseModel);
+                        },
+                        style: IconButton.styleFrom(
+                          fixedSize: const Size(36, 36),
+                          padding: EdgeInsets.zero,
+                          backgroundColor: Colors.red.withValues(alpha: 0.08),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        icon: const Icon(
+                          Icons.favorite,
+                          size: 19,
+                          color: Colors.red,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -160,7 +149,7 @@ class FavouriteScreenWidget extends StatelessWidget {
     alignment: Alignment.center,
     child: const Icon(
       Icons.school_outlined,
-      size: 32,
+      size: 30,
       color: ColorsConstants.primary,
     ),
   );

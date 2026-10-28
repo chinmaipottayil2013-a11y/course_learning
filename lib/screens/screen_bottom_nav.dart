@@ -20,6 +20,8 @@ class BottomNavBarScreen extends StatelessWidget {
         selectedItemColor: Colors.black,
         backgroundColor: Colors.white,
         currentIndex: bottomNavProvider.currentIndex,
+        selectedFontSize: 11,
+        unselectedFontSize: 11,
         onTap: (value) =>
             context.read<BottomNavBarProvider>().changeIndex(value),
         items: [

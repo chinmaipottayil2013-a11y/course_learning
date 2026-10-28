@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 
 class CartScreenWidget extends StatelessWidget {
   final CartItemModel cartItemModel;
-  final int number;
+  final int number; // kept so existing callers don't break (no longer shown)
   final int regionId;
   final RegionSelectionModel? regionSelectionModel;
 
@@ -26,81 +26,58 @@ class CartScreenWidget extends StatelessWidget {
     final String imageUrl = course.image;
 
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border.all(color: const Color(0xFFE6E8F0)),
-        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0xFFEAECF0)),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: const [
           BoxShadow(
-            color: Color(0x0D101828),
-            blurRadius: 20,
-            offset: Offset(0, 8),
+            color: Color(0x0A101828),
+            blurRadius: 16,
+            offset: Offset(0, 4),
           ),
         ],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: SizedBox(
-                  width: 92,
-                  height: 92,
-                  child: (imageUrl.isEmpty)
-                      ? _placeholder()
-                      : Image.network(
-                          imageUrl,
-                          fit: BoxFit.cover,
-
-                          loadingBuilder: (_, child, progress) =>
-                              progress == null
-                              ? child
-                              : Container(
-                                  color: ColorsConstants.containerColor,
-                                  alignment: Alignment.center,
-                                  child: const SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
-                                  ),
+          // ---- Thumbnail ----
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: SizedBox(
+              width: 84,
+              height: 84,
+              child: imageUrl.isEmpty
+                  ? _placeholder()
+                  : Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (_, child, progress) => progress == null
+                          ? child
+                          : Container(
+                              color: ColorsConstants.containerColor,
+                              alignment: Alignment.center,
+                              child: const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: ColorsConstants.primary,
                                 ),
-                          errorBuilder: (_, _, _) => _placeholder(),
-                        ),
-                ),
-              ),
-              Positioned(
-                top: 6,
-                left: 6,
-                child: Container(
-                  height: 24,
-                  width: 24,
-                  alignment: Alignment.center,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white,
-                  ),
-                  child: Text(
-                    '$number',
-                    style: const TextStyle(
-                      color: ColorsConstants.primary,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                      errorBuilder: (_, _, _) => _placeholder(),
                     ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
 
-          const SizedBox(width: 14),
+          const SizedBox(width: 12),
 
+          // ---- Name + price ----
           Expanded(
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -108,7 +85,7 @@ class CartScreenWidget extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    fontSize: 15,
+                    fontSize: 13.5,
                     fontWeight: FontWeight.w700,
                     height: 1.3,
                     letterSpacing: -0.2,
@@ -116,7 +93,6 @@ class CartScreenWidget extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
-
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10,
@@ -124,12 +100,12 @@ class CartScreenWidget extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color: ColorsConstants.containerColor,
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     '${regionSelectionModel?.currency ?? 'INR'} ${course.salePrice}',
                     style: const TextStyle(
-                      fontSize: 13,
+                      fontSize: 11.5,
                       fontWeight: FontWeight.w700,
                       color: ColorsConstants.primary,
                     ),
@@ -139,7 +115,7 @@ class CartScreenWidget extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(width: 4),
+          const SizedBox(width: 8),
 
           IconButton(
             onPressed: () async {
@@ -150,7 +126,12 @@ class CartScreenWidget extends StatelessWidget {
             },
             tooltip: 'Remove course',
             style: IconButton.styleFrom(
+              fixedSize: const Size(38, 38),
+              padding: EdgeInsets.zero,
               backgroundColor: Colors.redAccent.withValues(alpha: 0.08),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
             ),
             icon: const Icon(
               Icons.delete_outline_rounded,
@@ -168,7 +149,7 @@ class CartScreenWidget extends StatelessWidget {
     alignment: Alignment.center,
     child: const Icon(
       Icons.school_outlined,
-      size: 32,
+      size: 30,
       color: ColorsConstants.primary,
     ),
   );
