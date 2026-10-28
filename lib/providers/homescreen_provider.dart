@@ -35,8 +35,11 @@ class HomescreenProvider extends ChangeNotifier {
   List<CourseModel> _courseModel = [];
   List<CourseModel> get courseModel => _courseModel;
 
-  List<RegionSelectionModel> _regionSelectionModel = [];
-  List<RegionSelectionModel> get regionSelectionModel => _regionSelectionModel;
+  RegionResponseModel? _regionResponseModel;
+  RegionResponseModel? get regionResponseModel => _regionResponseModel;
+
+  List<RegionSelectionModel> get regionSelectionModel =>
+      _regionResponseModel?.results ?? [];
 
   String query = '';
   String? _categoryId;
@@ -183,8 +186,9 @@ class HomescreenProvider extends ChangeNotifier {
     try {
       isRegionLoading = true;
       errorMessage = null;
-      _regionSelectionModel = await _courseListService.getListByRegion();
       notifyListeners();
+      _regionResponseModel =
+          (await _courseListService.getListByRegion()) as RegionResponseModel?;
     } catch (e) {
       log(e.toString());
     } finally {
@@ -195,14 +199,14 @@ class HomescreenProvider extends ChangeNotifier {
 
   void selectedRegion(int id) {
     selectedCategoryId = id;
-    final region = _regionSelectionModel.firstWhere((item) => item.id == id);
+    final region = regionSelectionModel.firstWhere((item) => item.id == id);
     selectedCountryCode = region.countryCode;
     notifyListeners();
   }
 
   Future<void> applyRegion(int id, BuildContext context) async {
     selectedRegionId = id;
-    selectedCountryCode = _regionSelectionModel
+    selectedCountryCode = regionSelectionModel
         .where((r) => r.id == id)
         .firstOrNull
         ?.countryCode;

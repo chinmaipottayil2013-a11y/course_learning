@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import 'package:learning_course2/core/constants/razorpay_constants.dart';
@@ -31,7 +33,12 @@ class RazorpayProvider extends ChangeNotifier {
   String? message;
   PaymentReceipt? receipt;
 
+  String? paymentSignature;
+  String? razorpayOrderId;
+
   PaymentResponseModel? _paymentResponseModel;
+  Future<bool> Function(String, String, String)? _verify;
+
   int amount = 0;
   String pendingCourse = '';
 
@@ -43,21 +50,37 @@ class RazorpayProvider extends ChangeNotifier {
 
   void paymentProvider() {
     _razorpayService = RazorpayService(
-      onSuccess: (PaymentSuccessResponse response) {
-        receipt = PaymentReceipt(
-          paymentId: response.paymentId ?? '-',
-          orderId: _paymentResponseModel?.orderId ?? response.orderId ?? '-',
-          courseName: pendingCourse,
-          amountInPaisa: ((_paymentResponseModel?.amount ?? 0) * 100).round(),
-          paidAt: DateTime.now(),
+      onSuccess: (PaymentSuccessResponse response) async {
+        final ok = await _verify!(
+          response.orderId ?? '',
+          response.paymentId ?? '',
+          response.signature ?? '',
         );
-        status = PaymentStatus.success;
-        message = null;
+        log(
+          'SDK order: ${response.orderId}, payment: ${response.paymentId}, sig: ${response.signature}',
+        );
+        log('Created order: ${_paymentResponseModel?.orderId}');
+        if (ok) {
+          receipt = PaymentReceipt(
+            paymentId: response.paymentId ?? '-',
+            orderId: _paymentResponseModel?.orderId ?? response.orderId ?? '-',
+            courseName: pendingCourse,
+            amountInPaisa: ((_paymentResponseModel?.amount ?? 0) * 100).round(),
+            paidAt: DateTime.now(),
+          );
+          status = PaymentStatus.success;
+          message = null;
+        } else {
+          status = PaymentStatus.failure;
+          message = 'Verification failed';
+        }
+
         notifyListeners();
       },
       onFailure: (PaymentFailureResponse response) {
         status = PaymentStatus.failure;
         message = 'Payment failed';
+
         notifyListeners();
       },
       onExternalWallet: (ExternalWalletResponse response) {
@@ -71,16 +94,22 @@ class RazorpayProvider extends ChangeNotifier {
     required String keyId,
     required int amountInPaisa,
     required String currency,
+    required int regionId,
     required String courseName,
+
+    required Future<bool> Function(String, String, String) verify,
   }) async {
+    _verify = verify;
     pendingCourse = courseName;
     amount = amountInPaisa;
+
     status = PaymentStatus.loading;
     message = null;
     notifyListeners();
     try {
       _paymentResponseModel = await _paymentApiService.createOrder(
         currency: currency,
+        regionId: regionId,
       );
 
       _razorpayService.openCheckout(
@@ -93,6 +122,7 @@ class RazorpayProvider extends ChangeNotifier {
     } catch (e) {
       status = PaymentStatus.failure;
       message = 'Could not open checkout $e';
+
       notifyListeners();
     }
   }
@@ -101,6 +131,7 @@ class RazorpayProvider extends ChangeNotifier {
     status = PaymentStatus.idle;
     message = null;
     receipt = null;
+
     notifyListeners();
   }
 

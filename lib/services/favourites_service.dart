@@ -18,6 +18,9 @@ class FavouritesService {
     if (response.statusCode == 200) {
       final decoded = jsonDecode(response.body);
       final List<dynamic> data = decoded is List ? decoded : decoded['results'];
+      log(
+        'addToFavourite status: ${response.statusCode} body: ${response.body}',
+      );
 
       return data.map((data) => CourseModel.fromJson(data)).toList();
     } else {

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:learning_course2/core/constants/colors_constants.dart';
 
@@ -21,8 +23,6 @@ class FavouriteScreenWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final course = courseModel;
     final String imageUrl = course.image;
-
-    final bool isFavourite = courseModel.isFavourite;
 
     return Container(
       padding: const EdgeInsets.all(12),
@@ -137,13 +137,12 @@ class FavouriteScreenWidget extends StatelessWidget {
                     ),
                     const Spacer(),
                     IconButton(
-                      onPressed: isFavourite
-                          ? null
-                          : () async {
-                              await context
-                                  .read<FavouriteScreenProvider>()
-                                  .removeFromFavourite(course: courseModel);
-                            },
+                      onPressed: () async {
+                        log('HEART TAPPED: ${courseModel.id}');
+                        await context
+                            .read<FavouriteScreenProvider>()
+                            .removeFromFavourite(course: courseModel);
+                      },
                       icon: Icon(Icons.favorite, color: Colors.red),
                     ),
                   ],

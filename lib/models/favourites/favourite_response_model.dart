@@ -4,7 +4,7 @@ class FavoriteResponseModel {
   FavoriteResponseModel({required this.message});
 
   factory FavoriteResponseModel.fromJson(Map<String, dynamic> json) {
-    return FavoriteResponseModel(message: json['message'] as String? ?? '');
+    return FavoriteResponseModel(message: json['message'] ?? '');
   }
 
   Map<String, dynamic> toJson() {

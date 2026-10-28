@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:learning_course2/models/courses/course_model.dart';
 import 'package:learning_course2/services/favourites_service.dart';
@@ -40,9 +42,12 @@ class FavouriteScreenProvider extends ChangeNotifier {
   }
 
   Future<void> removeFromFavourite({required CourseModel course}) async {
+    notifyListeners();
     try {
       await _favouritesService.addToFavourite(courseId: course.id);
+      log('remove tapped: ${course.id}');
       course.isFavourite = false;
+      notifyListeners();
       _courseModel.removeWhere((c) => c.id == course.id);
     } catch (e) {
       errorMessage = e.toString();

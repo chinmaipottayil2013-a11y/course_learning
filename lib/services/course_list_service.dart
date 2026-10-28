@@ -97,13 +97,13 @@ class CourseListService {
     throw Exception('Failed to load courses: ${response.statusCode}');
   }
 
-  Future<List<RegionSelectionModel>> getListByRegion() async {
+  Future<RegionResponseModel> getListByRegion() async {
     final uri = Uri.parse(ApiConstants.courseByRegionUrl);
     final response = await _client.get(uri);
     if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(response.body);
+      final data = jsonDecode(response.body);
 
-      return data.map((data) => RegionSelectionModel.fromJson(data)).toList();
+      return RegionResponseModel.fromJson(data);
     }
     throw Exception('Failed to load region data ${response.statusCode}');
   }

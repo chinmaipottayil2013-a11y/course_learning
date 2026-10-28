@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:learning_course2/core/constants/razorpay_constants.dart';
+import 'package:learning_course2/models/courses/region_selection_model.dart';
+import 'package:learning_course2/providers/cart_provider.dart';
+
+import 'package:learning_course2/providers/homescreen_provider.dart';
 
 import 'package:learning_course2/providers/razorpay_provider.dart';
+import 'package:learning_course2/screens/screen_cart.dart';
 import 'package:provider/provider.dart';
 
 class ScreenPayment extends StatelessWidget {
   final double total;
   final List<dynamic> courseIds;
+
   const ScreenPayment({
     super.key,
     required this.total,
@@ -30,16 +36,33 @@ class ScreenPayment extends StatelessWidget {
 
         child: isSuccess
             ? _ReceiptView(receipt: paymentProvider.receipt!)
-            : _CheckoutView(provider: paymentProvider, total: total),
+            : _CheckoutView(
+                provider: paymentProvider,
+                total: total,
+                selectionModel: context
+                    .watch<HomescreenProvider>()
+                    .regionSelectionModel
+                    .where(
+                      (region) =>
+                          region.id ==
+                          context.read<HomescreenProvider>().selectedRegionId,
+                    )
+                    .firstOrNull,
+              ),
       ),
     );
   }
 }
 
 class _CheckoutView extends StatelessWidget {
+  final RegionSelectionModel? selectionModel;
   final RazorpayProvider provider;
   final double total;
-  const _CheckoutView({required this.provider, required this.total});
+  const _CheckoutView({
+    required this.provider,
+    required this.total,
+    required this.selectionModel,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -113,8 +136,22 @@ class _CheckoutView extends StatelessWidget {
                 : () => context.read<RazorpayProvider>().pay(
                     keyId: RazorpayConstants.keyId,
                     amountInPaisa: 90000,
-                    currency: 'INR',
-                    courseName: 'Flutter development',
+                    regionId:
+                        context.read<HomescreenProvider>().selectedRegionId ??
+                        3,
+                    currency: selectionModel?.currency ?? 'INR',
+                    courseName: 'Courses',
+                    verify: (orderId, paymentId, signature) =>
+                        context.read<CartProvider>().verifyPayment(
+                          razorpayOrderId: orderId,
+                          razorpayPaymentId: paymentId,
+                          razorpaySignature: signature,
+                          regionId:
+                              context
+                                  .read<HomescreenProvider>()
+                                  .selectedRegionId ??
+                              3,
+                        ),
                   ),
             child: provider.isLoading
                 ? const SizedBox(
@@ -189,6 +226,10 @@ class _ReceiptView extends StatelessWidget {
           height: 54,
           child: ElevatedButton(
             onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const ScreenCart()),
+              );
               context.read<RazorpayProvider>().reset();
             },
             child: const Text('Done'),
