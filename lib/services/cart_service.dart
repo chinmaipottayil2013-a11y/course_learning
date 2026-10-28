@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:learning_course2/core/constants/api_constants.dart';
@@ -19,7 +18,7 @@ class CartService {
       uri,
       headers: {'Accept': 'application/json'},
     );
-    log('CART RAW region=$regionId body=${response.body}', name: 'CartRaw');
+    // log('CART RAW region=$regionId body=${response.body}', name: 'CartRaw');
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);

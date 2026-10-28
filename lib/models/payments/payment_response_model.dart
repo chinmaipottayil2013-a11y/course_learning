@@ -13,7 +13,7 @@ class PaymentResponseModel {
   final double cgstRate;
   final double sgstRate;
   final double igstRate;
-  final String billingState;
+  final String? billingState;
   final String billingCountry;
   final String? buyerGstin;
 
@@ -32,7 +32,7 @@ class PaymentResponseModel {
     required this.cgstRate,
     required this.sgstRate,
     required this.igstRate,
-    required this.billingState,
+    this.billingState,
     required this.billingCountry,
     this.buyerGstin,
   });
@@ -53,7 +53,7 @@ class PaymentResponseModel {
       cgstRate: (json['cgst_rate'] as num).toDouble(),
       sgstRate: (json['sgst_rate'] as num).toDouble(),
       igstRate: (json['igst_rate'] as num).toDouble(),
-      billingState: json['billing_state'] as String,
+      billingState: json['billing_state'] as String?,
       billingCountry: json['billing_country'] as String,
       buyerGstin: json['buyer_gstin'] as String?,
     );

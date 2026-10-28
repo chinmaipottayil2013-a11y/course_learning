@@ -1,3 +1,39 @@
+class RegionResponseModel {
+  final int count;
+  final String? next;
+  final String? previous;
+  final List<RegionSelectionModel> results;
+
+  RegionResponseModel({
+    required this.count,
+    this.next,
+    this.previous,
+    required this.results,
+  });
+
+  factory RegionResponseModel.fromJson(Map<String, dynamic> json) {
+    return RegionResponseModel(
+      count: json['count'] ?? 0,
+      next: json['next'],
+      previous: json['previous'],
+      results:
+          (json['results'] as List<dynamic>?)
+              ?.map((item) => RegionSelectionModel.fromJson(item))
+              .toList() ??
+          [],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'count': count,
+      'next': next,
+      'previous': previous,
+      'results': results.map((item) => item.toJson()).toList(),
+    };
+  }
+}
+
 class RegionSelectionModel {
   final int id;
   final String name;
@@ -21,14 +57,14 @@ class RegionSelectionModel {
 
   factory RegionSelectionModel.fromJson(Map<String, dynamic> json) {
     return RegionSelectionModel(
-      id: json['id'] as int,
-      name: json['name'] as String,
-      countryCode: json['country_code'] as String,
-      languageCode: json['language_code'] as String,
-      currency: json['currency'] as String,
-      currencySymbol: json['currency_symbol'] as String?,
-      exchangeRate: (json['exchange_rate'] as num).toDouble(),
-      isActive: json['is_active'] as bool,
+      id: json['id'] ?? 0,
+      name: json['name'] ?? '',
+      countryCode: json['country_code'] ?? '',
+      languageCode: json['language_code'] ?? '',
+      currency: json['currency'] ?? '',
+      currencySymbol: json['currency_symbol'],
+      exchangeRate: (json['exchange_rate'] as num?)?.toDouble() ?? 0.0,
+      isActive: json['is_active'] ?? false,
     );
   }
 

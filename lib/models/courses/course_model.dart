@@ -10,6 +10,9 @@ class CourseModel {
   final double mrp;
   final String totalHour;
   final String level;
+  final int sponsoredWeight;
+  final bool freeCourse;
+  final bool isTestEligible;
   bool isFavourite;
   bool isCartAdded;
   final double averageReview;
@@ -52,6 +55,9 @@ class CourseModel {
     required this.averageReview,
     required this.completedPercentage,
     required this.lastViewedLecture,
+    required this.sponsoredWeight,
+    required this.freeCourse,
+    required this.isTestEligible,
     required this.isPurchased,
     required this.instructors,
     required this.provider,
@@ -84,6 +90,9 @@ class CourseModel {
       totalHour: json['total_hour']?.toString() ?? '',
 
       level: json['level'] ?? '',
+      sponsoredWeight: json['sponsored_weight'] ?? 0,
+      freeCourse: json['free_course'] ?? false,
+      isTestEligible: json['is_test_eligible'] ?? false,
 
       isFavourite: json['is_favourite'] ?? false,
 
@@ -144,6 +153,9 @@ class CourseModel {
       completedPercentage: completedPercentage,
       lastViewedLecture: lastViewedLecture,
       isPurchased: isPurchased,
+      sponsoredWeight: sponsoredWeight,
+      freeCourse: freeCourse,
+      isTestEligible: isTestEligible,
       instructors: instructors,
       provider: provider,
       institution: institution,
