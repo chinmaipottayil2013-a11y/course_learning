@@ -40,7 +40,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       navigatorKey: NavigationService.navigatorKey,
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(textTheme: GoogleFonts.outfitTextTheme()),
+      theme: ThemeData(
+        fontFamily: GoogleFonts.poppins().fontFamily,
+        useMaterial3: true,
+      ),
       home: ScreenSplash(),
     );
   }

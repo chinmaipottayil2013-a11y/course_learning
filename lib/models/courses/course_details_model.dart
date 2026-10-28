@@ -130,7 +130,7 @@ class CourseDetailsModel {
       industry: (json['industry'] as List? ?? [])
           .map((e) => IndustryModel.fromJson(e))
           .toList(),
-      language: json['language'],
+      language: json['language']?.toString(),
       lectureTitle: (json['lecture_title'] as List? ?? [])
           .map((e) => LectureTitleModel.fromJson(e))
           .toList(),
