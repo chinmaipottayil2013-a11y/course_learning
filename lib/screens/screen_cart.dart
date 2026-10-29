@@ -138,135 +138,140 @@ class _ScreenCartState extends State<ScreenCart> {
             ),
 
             Expanded(
-              child: Builder(
-                builder: (context) {
-                  if (cartProvider.isLoading) {
-                    return Center(
-                      child: SpinKitFadingCircle(
-                        color: Colors.blue.shade900,
-                        size: 42,
-                      ),
-                    );
-                  }
-
-                  if (cartProvider.errorMessage != null) {
-                    return Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(24),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(
-                              Icons.cloud_off_rounded,
-                              size: 48,
-                              color: Colors.black38,
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              cartProvider.errorMessage!,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.black54,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            OutlinedButton.icon(
-                              onPressed: () {
-                                final regionId =
-                                    homeProvider.selectedRegionId ?? 3;
-
-                                context.read<CartProvider>().getCartItems(
-                                  regionId: regionId,
-                                  context: context,
-                                );
-                              },
-                              icon: const Icon(Icons.refresh_rounded),
-                              label: const Text('Try again'),
-                            ),
-                          ],
+              child: ScrollConfiguration(
+                behavior: const MaterialScrollBehavior().copyWith(
+                  overscroll: false,
+                ),
+                child: Builder(
+                  builder: (context) {
+                    if (cartProvider.isLoading) {
+                      return Center(
+                        child: SpinKitFadingCircle(
+                          color: Colors.blue.shade900,
+                          size: 42,
                         ),
-                      ),
-                    );
-                  }
+                      );
+                    }
 
-                  if (cart == null || items.isEmpty) {
-                    return Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              height: 100,
-                              width: 100,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(28),
+                    if (cartProvider.errorMessage != null) {
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.cloud_off_rounded,
+                                size: 48,
+                                color: Colors.black38,
                               ),
-                              child: Icon(
-                                Icons.shopping_cart_outlined,
-                                size: 46,
-                                color: ColorsConstants.primary.withValues(
-                                  alpha: 0.65,
+                              const SizedBox(height: 12),
+                              Text(
+                                cartProvider.errorMessage!,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.black54,
                                 ),
                               ),
-                            ),
+                              const SizedBox(height: 16),
+                              OutlinedButton.icon(
+                                onPressed: () {
+                                  final regionId =
+                                      homeProvider.selectedRegionId ?? 3;
 
-                            const Text(
-                              'Your cart is empty',
-                              style: TextStyle(
-                                fontSize: 19,
-                                fontWeight: FontWeight.w800,
-                                color: ColorsConstants.textColor,
+                                  context.read<CartProvider>().getCartItems(
+                                    regionId: regionId,
+                                    context: context,
+                                  );
+                                },
+                                icon: const Icon(Icons.refresh_rounded),
+                                label: const Text('Try again'),
                               ),
-                            ),
-                            const SizedBox(height: 8),
-                            const Text(
-                              'Explore courses and add the ones you want to learn.',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 13,
-                                height: 1.5,
-                                color: Colors.black54,
-                              ),
-                            ),
-                            SizedBox(height: 10),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                foregroundColor: Colors.white,
-                                backgroundColor: Colors.black,
-                              ),
-                              onPressed: () {
-                                context
-                                    .read<BottomNavBarProvider>()
-                                    .changeIndex(0);
-                              },
-                              child: Text('Explore courses'),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  }
-
-                  return ListView.separated(
-                    padding: const EdgeInsets.fromLTRB(18, 0, 18, 16),
-                    itemCount: items.length,
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(height: 12),
-                    itemBuilder: (context, index) {
-                      final item = items[index];
-
-                      return CartScreenWidget(
-                        cartItemModel: item,
-                        number: index + 1,
-                        regionId: homeProvider.selectedRegionId ?? 3,
-                        regionSelectionModel: selectedRegion,
                       );
-                    },
-                  );
-                },
+                    }
+
+                    if (cart == null || items.isEmpty) {
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                height: 100,
+                                width: 100,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(28),
+                                ),
+                                child: Icon(
+                                  Icons.shopping_cart_outlined,
+                                  size: 46,
+                                  color: ColorsConstants.primary.withValues(
+                                    alpha: 0.65,
+                                  ),
+                                ),
+                              ),
+
+                              const Text(
+                                'Your cart is empty',
+                                style: TextStyle(
+                                  fontSize: 19,
+                                  fontWeight: FontWeight.w800,
+                                  color: ColorsConstants.textColor,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              const Text(
+                                'Explore courses and add the ones you want to learn.',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  height: 1.5,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  backgroundColor: Colors.black,
+                                ),
+                                onPressed: () {
+                                  context
+                                      .read<BottomNavBarProvider>()
+                                      .changeIndex(0);
+                                },
+                                child: Text('Explore courses'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+
+                    return ListView.separated(
+                      padding: const EdgeInsets.fromLTRB(18, 0, 18, 16),
+                      itemCount: items.length,
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 12),
+                      itemBuilder: (context, index) {
+                        final item = items[index];
+
+                        return CartScreenWidget(
+                          cartItemModel: item,
+                          number: index + 1,
+                          regionId: homeProvider.selectedRegionId ?? 3,
+                          regionSelectionModel: selectedRegion,
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
             ),
 

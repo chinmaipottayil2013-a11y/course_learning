@@ -19,4 +19,6 @@ class ApiConstants {
   static String get paymentUrl =>
       '${baseUrl}api/payments/learning/payment-request/';
   static String get verifyPayment => '${baseUrl}api/learning/checkout-page/';
+  static String get enrolledCourses =>
+      '${baseUrl}api/learning/enrolled-courses/';
 }
