@@ -1,4 +1,4 @@
-import 'package:learning_course2/models/enrolled_courses/enrolled_course_details_model.dart';
+import 'package:learning_course2/models/enrolled_courses/enrolled_coursecourse_model.dart';
 
 class EnrolledCourseModel {
   final int id;

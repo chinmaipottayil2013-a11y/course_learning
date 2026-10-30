@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:learning_course2/core/constants/colors_constants.dart';
 import 'package:learning_course2/providers/enrolled_course_provider.dart';
+import 'package:learning_course2/reusables/enrolled_widget.dart';
+import 'package:learning_course2/reusables/skeleton_enrolled.dart';
 import 'package:provider/provider.dart';
 
 class ScreenEnrolledCourses extends StatefulWidget {
@@ -27,37 +29,53 @@ class _ScreenEnrolledCoursesState extends State<ScreenEnrolledCourses> {
 
   @override
   Widget build(BuildContext context) {
-    final progressProvider = context.watch<EnrolledCourseProvider>();
-    String inTabName = 'In-Progress Courses';
-
-    if (progressProvider.totalCount > 0) {
-      inTabName = 'In-Progress Courses (${progressProvider.totalCount})';
-    }
-
+    final totalCount = context.watch<EnrolledCourseProvider>().totalCount;
+    final inTabName = totalCount > 0
+        ? 'In-Progress Courses ($totalCount)'
+        : 'In-Progress Courses';
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         backgroundColor: ColorsConstants.background,
         appBar: AppBar(
           backgroundColor: ColorsConstants.background,
-          title: const Text(
-            'Enrolled courses',
-            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 22),
+          title: Text(
+            'Enrolled Courses',
+            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
           ),
           bottom: TabBar(
-            labelColor: Colors.blue,
+            indicatorSize: TabBarIndicatorSize.tab,
+            indicatorColor: Colors.blue.shade900,
             unselectedLabelColor: Colors.grey,
-            labelStyle: TextStyle(fontWeight: FontWeight.w700),
+            dividerColor: Colors.transparent,
+            labelColor: Colors.blue.shade900,
+            labelStyle: TextStyle(fontWeight: FontWeight.w600),
             tabs: [
-              Tab(text: inTabName),
-              Tab(text: 'Completed Courses'),
+              Tab(
+                height: 50,
+
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 5),
+                  child: Text(inTabName, style: TextStyle(fontSize: 13)),
+                ),
+              ),
+              Tab(
+                height: 50,
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 5),
+                  child: Text(
+                    'Completed Courses',
+                    style: TextStyle(fontSize: 13),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
-        body: TabBarView(
+        body: const TabBarView(
           children: [
             EnrolledCourses(),
-            Center(child: Text('Completed Courses')),
+            Center(child: Text('No completed courses')),
           ],
         ),
       ),
@@ -81,6 +99,12 @@ class _EnrolledCoursesState extends State<EnrolledCourses> {
     _controller.addListener(_onScroll);
   }
 
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   void _onScroll() {
     if (_controller.position.pixels >=
         _controller.position.maxScrollExtent - 200) {
@@ -89,60 +113,45 @@ class _EnrolledCoursesState extends State<EnrolledCourses> {
   }
 
   @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          Consumer<EnrolledCourseProvider>(
-            builder: (context, provider, child) {
-              if (provider.isLoading) {
+    return SingleChildScrollView(
+      padding: EdgeInsets.only(top: 10),
+      controller: _controller,
+      child: Consumer<EnrolledCourseProvider>(
+        builder: (context, provider, child) {
+          final enrolledCourses = provider.inProgressCourses;
+          if (provider.isLoading && enrolledCourses.isEmpty) {
+            return EnrolledCourseSkeletonGrid();
+          }
+          if (provider.errorMessage != null) {
+            return Center(child: Text(provider.errorMessage!));
+          }
+          if (enrolledCourses.isEmpty) {
+            return Center(child: Text('No enrolled courses found'));
+          }
+          final itemCount = enrolledCourses.length + (provider.hasMore ? 1 : 0);
+
+          return GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            padding: const EdgeInsets.all(10),
+            itemCount: itemCount,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              mainAxisExtent: 300,
+            ),
+            itemBuilder: (context, index) {
+              if (index == enrolledCourses.length) {
                 return const Center(child: CircularProgressIndicator());
               }
-              if (provider.errorMessage != null) {
-                return Center(child: Text(provider.errorMessage!));
-              }
-              final enrolledCourses = provider.inProgressCourses;
-              if (enrolledCourses.isEmpty) {
-                return const Center(child: Text('No Enrolled courses found'));
-              }
-              int itemCount = enrolledCourses.length;
-              if (provider.hasMore) {
-                itemCount = itemCount + 1;
-              }
-              return Expanded(
-                child: ListView.builder(
-                  controller: _controller,
-                  itemCount: enrolledCourses.length,
-                  itemBuilder: (context, index) {
-                    if (index == enrolledCourses.length) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    final enrolled = enrolledCourses[index];
-                    final course = enrolled.course;
-
-                    return ListTile(
-                      leading: Image.network(
-                        course.image,
-                        width: 55,
-                        height: 55,
-                        fit: BoxFit.cover,
-                      ),
-                      title: Text(course.name),
-                      subtitle: Text(enrolled.status),
-                      trailing: Text('${course.completedPercentage}%'),
-                    );
-                  },
-                ),
+              return EnrolledWidget(
+                courseCourseModel: enrolledCourses[index].course,
               );
             },
-          ),
-        ],
+          );
+        },
       ),
     );
   }
