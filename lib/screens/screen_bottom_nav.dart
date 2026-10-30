@@ -4,6 +4,7 @@ import 'package:learning_course2/providers/bottom_nav_bar_provider.dart';
 import 'package:learning_course2/screens/screen_cart.dart';
 import 'package:learning_course2/screens/screen_favourite.dart';
 import 'package:learning_course2/screens/screen_home.dart';
+import 'package:learning_course2/screens/screen_profile.dart';
 import 'package:provider/provider.dart';
 
 class BottomNavBarScreen extends StatelessWidget {
@@ -11,7 +12,12 @@ class BottomNavBarScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screens = [const ScreenHome(), const ScreenCart(), ScreenFavourite()];
+    final screens = [
+      const ScreenHome(),
+      const ScreenCart(),
+      ScreenFavourite(),
+      const ScreenProfile(),
+    ];
     final bottomNavProvider = context.watch<BottomNavBarProvider>();
     return Scaffold(
       body: screens[bottomNavProvider.currentIndex],
@@ -19,6 +25,7 @@ class BottomNavBarScreen extends StatelessWidget {
         elevation: 0,
         selectedItemColor: Colors.black,
         backgroundColor: Colors.white,
+        type: BottomNavigationBarType.fixed,
         currentIndex: bottomNavProvider.currentIndex,
         selectedFontSize: 11,
         unselectedFontSize: 11,
@@ -34,6 +41,7 @@ class BottomNavBarScreen extends StatelessWidget {
             icon: Icon(Icons.favorite),
             label: 'Favourites',
           ),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Person'),
         ],
       ),
     );

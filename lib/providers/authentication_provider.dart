@@ -30,6 +30,8 @@ class AuthenticationProvider extends ChangeNotifier {
       passwordController.text.trim(),
     );
     if (result != null) {
+      emailController.clear();
+      passwordController.clear();
       model = result;
       isLoading = false;
       notifyListeners();

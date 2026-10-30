@@ -1,12 +1,11 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:learning_course2/core/constants/colors_constants.dart';
 import 'package:learning_course2/providers/authentication_provider.dart';
-
 import 'package:learning_course2/providers/homescreen_provider.dart';
 import 'package:learning_course2/reusables/course_list_widget.dart';
+import 'package:learning_course2/reusables/skeleton_grid.dart';
 import 'package:learning_course2/screens/screen_login.dart';
 import 'package:learning_course2/screens/screen_course_details.dart';
 import 'package:provider/provider.dart';
@@ -58,14 +57,6 @@ class _HomescreenState extends State<ScreenHome> {
   Widget buildCountryDropDown() {
     return Consumer<HomescreenProvider>(
       builder: (context, provider, child) {
-        if (provider.isRegionLoading) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (provider.regionSelectionModel.isEmpty) {
-          return const Text('No countries available');
-        }
-
         // Selected region (null if the id matches nothing)
         final selectedRegion = provider.regionSelectionModel
             .where((region) => region.id == provider.selectedRegionId)
@@ -90,7 +81,10 @@ class _HomescreenState extends State<ScreenHome> {
             child: DropdownButton<int>(
               isExpanded: true,
               value: selectedRegion?.id,
-              hint: Text(selectedRegion?.name ?? 'Select Country'),
+              hint: Text(
+                selectedRegion?.name ?? 'Select Country',
+                style: TextStyle(fontSize: 13, color: Colors.black45),
+              ),
               borderRadius: BorderRadius.circular(16),
               icon: const Icon(
                 Icons.keyboard_arrow_down_rounded,
@@ -104,7 +98,7 @@ class _HomescreenState extends State<ScreenHome> {
                     style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
-                      color: ColorsConstants.textColor,
+                      color: Colors.black54,
                     ),
                   ),
                 );
@@ -396,7 +390,6 @@ class _HomescreenState extends State<ScreenHome> {
       ),
       body: Consumer<HomescreenProvider>(
         builder: (context, homeScreenProvider, child) {
-          // Declared here so the whole body, including itemBuilder, can use it
           final selectedRegion = homeScreenProvider.regionSelectionModel
               .where((r) => r.id == homeScreenProvider.selectedRegionId)
               .firstOrNull;
@@ -414,7 +407,6 @@ class _HomescreenState extends State<ScreenHome> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Search bar and filter button
                   Row(
                     children: [
                       Expanded(
@@ -503,12 +495,10 @@ class _HomescreenState extends State<ScreenHome> {
 
                   const SizedBox(height: 20),
 
-                  // Country dropdown
                   buildCountryDropDown(),
 
                   const SizedBox(height: 24),
 
-                  // Available courses heading and count
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -545,14 +535,8 @@ class _HomescreenState extends State<ScreenHome> {
 
                   const SizedBox(height: 14),
 
-                  // Loading, error, empty state, or course list
                   if (homeScreenProvider.isLoading)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 60),
-                      child: Center(
-                        child: SpinKitFadingCircle(color: Colors.blue.shade900),
-                      ),
-                    )
+                    const CourseSkeletonGrid()
                   else if (homeScreenProvider.errorMessage != null)
                     Center(
                       child: Padding(
