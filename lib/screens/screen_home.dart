@@ -384,9 +384,6 @@ class _HomescreenState extends State<ScreenHome> {
             letterSpacing: -0.5,
           ),
         ),
-        actions: [
-          IconButton(onPressed: logout, icon: const Icon(Icons.logout)),
-        ],
       ),
       body: Consumer<HomescreenProvider>(
         builder: (context, homeScreenProvider, child) {

@@ -23,18 +23,18 @@ class EnrolledCourseProvider extends ChangeNotifier {
   List<EnrolledCourseModel> inProgressCourses = [];
   List<EnrolledCourseModel> completedCourses = [];
 
-  void addCourses(
-    List<EnrolledCourseModel> existing,
-    List<EnrolledCourseModel> newCourses,
-  ) {
-    final existingIds = existing.map((course) => course.id).toSet();
+  // void addCourses(
+  //   List<EnrolledCourseModel> existing,
+  //   List<EnrolledCourseModel> newCourses,
+  // ) {
+  //   final existingIds = existing.map((course) => course.id).toSet();
 
-    for (final course in newCourses) {
-      if (existingIds.add(course.id)) {
-        existing.add(course);
-      }
-    }
-  }
+  //   for (final course in newCourses) {
+  //     if (existingIds.add(course.id)) {
+  //       existing.add(course);
+  //     }
+  //   }
+  // }
 
   Future<void> getEnrolledCourses({String? status, String? search}) async {
     _status = status;
@@ -109,19 +109,19 @@ class EnrolledCourseProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> searchEnrolledCourse(String query) async {
-    await getEnrolledCourses(status: _status, search: query);
-  }
+  // Future<void> searchEnrolledCourse(String query) async {
+  //   await getEnrolledCourses(status: _status, search: query);
+  // }
 
-  Future<void> filterByStatus(String? newStatus) async {
-    await getEnrolledCourses(search: _search, status: newStatus);
-  }
+  // Future<void> filterByStatus(String? newStatus) async {
+  //   await getEnrolledCourses(search: _search, status: newStatus);
+  // }
 
-  Future<void> changePage(int page) async {
-    await getEnrolledCourses(search: _search, status: _status);
-  }
+  // Future<void> changePage(int page) async {
+  //   await getEnrolledCourses(search: _search, status: _status);
+  // }
 
-  Future<void> refreshEnrolledCourse() async {
-    await getEnrolledCourses(status: _status, search: _search);
-  }
+  // Future<void> refreshEnrolledCourse() async {
+  //   await getEnrolledCourses(status: _status, search: _search);
+  // }
 }

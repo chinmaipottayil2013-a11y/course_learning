@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:learning_course2/core/constants/colors_constants.dart';
 import 'package:learning_course2/providers/enrolled_course_provider.dart';
 import 'package:learning_course2/reusables/enrolled_widget.dart';
@@ -129,27 +130,39 @@ class _EnrolledCoursesState extends State<EnrolledCourses> {
           if (enrolledCourses.isEmpty) {
             return Center(child: Text('No enrolled courses found'));
           }
-          final itemCount = enrolledCourses.length + (provider.hasMore ? 1 : 0);
+          final itemCount = enrolledCourses.length;
 
-          return GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(10),
-            itemCount: itemCount,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
-              mainAxisExtent: 300,
-            ),
-            itemBuilder: (context, index) {
-              if (index == enrolledCourses.length) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              return EnrolledWidget(
-                courseCourseModel: enrolledCourses[index].course,
-              );
-            },
+          return Column(
+            children: [
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(10),
+                itemCount: itemCount,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 12,
+                  crossAxisSpacing: 12,
+                  childAspectRatio: 0.72,
+                  mainAxisExtent: 300,
+                ),
+                itemBuilder: (context, index) {
+                  return EnrolledWidget(
+                    courseCourseModel: enrolledCourses[index].course,
+                  );
+                },
+              ),
+              if (provider.isLoadingMore)
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Center(
+                    child: SpinKitThreeBounce(
+                      color: Colors.blue.shade900,
+                      size: 20,
+                    ),
+                  ),
+                ),
+            ],
           );
         },
       ),

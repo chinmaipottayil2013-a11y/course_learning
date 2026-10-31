@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:learning_course2/core/constants/colors_constants.dart';
 
 import 'package:learning_course2/providers/authentication_provider.dart';
+import 'package:learning_course2/providers/bottom_nav_bar_provider.dart';
 import 'package:learning_course2/screens/screen_enrolled_courses.dart';
+import 'package:learning_course2/screens/screen_favourite.dart';
 import 'package:learning_course2/screens/screen_login.dart';
 import 'package:provider/provider.dart';
 
@@ -30,7 +32,7 @@ class _ScreenProfileState extends State<ScreenProfile> {
     {
       'title': 'Favourite Courses',
       'subtitle': 'Courses saved to your wishlist',
-      'icon': Icons.favorite, // icons were swapped with Certificates
+      'icon': Icons.favorite,
       'color': Colors.pink,
     },
     {
@@ -72,11 +74,30 @@ class _ScreenProfileState extends State<ScreenProfile> {
           ),
         );
         break;
+
+      case 'Favourite Courses':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ScreenFavourite()),
+        );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final auth = context.watch<AuthenticationProvider>();
+    final user = auth.model?.userData;
+    final String? profileImage = user?.profilePicture;
+    final bool hasImage = profileImage != null && profileImage.isNotEmpty;
+
+    // log('User: ${user?.name}');
+    // log('Username: ${user?.username}');
+    // log('Email: ${user?.email}');
+
+    // log('Model: ${auth.model}');
+    // log('User data: ${auth.model?.userData}');
+    // log('Name: ${user?.name}');
+    // log('Email: ${user?.email}');
     return Scaffold(
       backgroundColor: ColorsConstants.background,
       appBar: AppBar(
@@ -120,19 +141,57 @@ class _ScreenProfileState extends State<ScreenProfile> {
                       leading: CircleAvatar(
                         radius: 26,
                         backgroundColor: Colors.black.withValues(alpha: 0.06),
-                        child: const Icon(Icons.person, color: Colors.black54),
+                        child: hasImage
+                            ? ClipOval(
+                                child: Image.network(
+                                  profileImage,
+                                  height: 52,
+                                  width: 52,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return const Icon(
+                                      Icons.person,
+                                      color: Colors.black54,
+                                    );
+                                  },
+                                ),
+                              )
+                            : const Icon(Icons.person, color: Colors.black54),
                       ),
-                      title: const Text(
-                        'Chinmai Pottayil',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      title: Row(
+                        children: [
+                          Text(
+                            user?.name ?? 'No Name',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const Spacer(),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: ColorsConstants.containerColor,
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Text(
+                              user?.role ?? '',
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: ColorsConstants.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      subtitle: const Padding(
+                      subtitle: Padding(
                         padding: EdgeInsets.only(top: 2),
                         child: Text(
-                          'chinmaipottayil2013@gmail.com',
+                          user?.email ?? 'No email available',
                           style: TextStyle(fontSize: 13, color: Colors.black54),
                         ),
                       ),
@@ -282,6 +341,7 @@ class _ScreenProfileState extends State<ScreenProfile> {
                   ),
                   onPressed: () async {
                     await context.read<AuthenticationProvider>().logout();
+                    context.read<BottomNavBarProvider>().reset();
 
                     Navigator.pushAndRemoveUntil(
                       context,

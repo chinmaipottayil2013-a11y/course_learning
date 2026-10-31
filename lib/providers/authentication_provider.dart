@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:learning_course2/models/authentication/authentication_model.dart';
 import 'package:learning_course2/services/authentication_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthenticationProvider extends ChangeNotifier {
   bool _isObscure = true;
@@ -14,11 +16,35 @@ class AuthenticationProvider extends ChangeNotifier {
   bool isLoading = false;
   String? errorMessage;
 
+  String name = '';
+  String email = '';
+
   bool get isObscure => _isObscure;
   void showPassword() {
     _isObscure = !_isObscure;
     notifyListeners();
   }
+
+  AuthenticationProvider() {
+    loadUser();
+  }
+
+  // Method to load User Datas (name,email)
+  Future<void> loadUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userData = prefs.getString('user_data');
+
+    if (userData == null) return;
+
+    try {
+      final decodedData = jsonDecode(userData);
+      model = AuthenticationModel.fromJson({'user_data': decodedData});
+      notifyListeners();
+    } catch (_) {
+      prefs.remove('user_data');
+    }
+  }
+  //
 
   Future<bool> login() async {
     isLoading = true;
@@ -33,6 +59,22 @@ class AuthenticationProvider extends ChangeNotifier {
       emailController.clear();
       passwordController.clear();
       model = result;
+      // Method to load User Datas
+      final user = result.userData;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(
+        'user_data',
+        jsonEncode({
+          'id': user.id,
+          'name': user.name,
+          'email': user.email,
+          'username': user.username,
+          'profile_picture': user.profilePicture,
+          'role': user.role,
+          'user_type': user.userType,
+        }),
+      );
+
       isLoading = false;
       notifyListeners();
       return true;
@@ -63,6 +105,8 @@ class AuthenticationProvider extends ChangeNotifier {
 
   Future<void> logout() async {
     await _authService.logout();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('user_data');
     model = null;
     notifyListeners();
   }
