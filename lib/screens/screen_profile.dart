@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:learning_course2/core/constants/colors_constants.dart';
 
@@ -6,6 +8,7 @@ import 'package:learning_course2/providers/bottom_nav_bar_provider.dart';
 import 'package:learning_course2/screens/screen_enrolled_courses.dart';
 import 'package:learning_course2/screens/screen_favourite.dart';
 import 'package:learning_course2/screens/screen_login.dart';
+import 'package:learning_course2/screens/screen_profile_update.dart';
 import 'package:provider/provider.dart';
 
 class ScreenProfile extends StatefulWidget {
@@ -88,6 +91,7 @@ class _ScreenProfileState extends State<ScreenProfile> {
     final auth = context.watch<AuthenticationProvider>();
     final user = auth.model?.userData;
     final String? profileImage = user?.profilePicture;
+    log('Profile image : $profileImage');
     final bool hasImage = profileImage != null && profileImage.isNotEmpty;
 
     // log('User: ${user?.name}');
@@ -149,6 +153,7 @@ class _ScreenProfileState extends State<ScreenProfile> {
                                   width: 52,
                                   fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) {
+                                    log('Error : $error');
                                     return const Icon(
                                       Icons.person,
                                       color: Colors.black54,
@@ -215,7 +220,15 @@ class _ScreenProfileState extends State<ScreenProfile> {
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ScreenProfileUpdate(),
+                                ),
+                              );
+                            },
                             child: const Text('View & Edit Profile'),
                           ),
                         ),
@@ -332,6 +345,7 @@ class _ScreenProfileState extends State<ScreenProfile> {
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
                     surfaceTintColor: Colors.transparent,
+                    overlayColor: Colors.transparent,
                     elevation: 0.5,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
@@ -340,11 +354,16 @@ class _ScreenProfileState extends State<ScreenProfile> {
                     backgroundColor: Colors.white,
                   ),
                   onPressed: () async {
-                    await context.read<AuthenticationProvider>().logout();
-                    context.read<BottomNavBarProvider>().reset();
+                    final authProvider = context.read<AuthenticationProvider>();
 
-                    Navigator.pushAndRemoveUntil(
-                      context,
+                    final navProvider = context.read<BottomNavBarProvider>();
+
+                    final navigator = Navigator.of(context);
+
+                    await authProvider.logout();
+                    navProvider.reset();
+
+                    navigator.pushAndRemoveUntil(
                       MaterialPageRoute(
                         builder: (context) => const ScreenLogin(),
                       ),

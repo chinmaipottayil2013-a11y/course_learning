@@ -44,7 +44,23 @@ class AuthenticationProvider extends ChangeNotifier {
       prefs.remove('user_data');
     }
   }
-  //
+
+  //New updates Datas
+
+  Future<void> updatedUser({
+    required String name,
+    String? profilePicture,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    final userData = prefs.getString('user_data');
+    if (userData == null) return;
+
+    final Map<String, dynamic> data = jsonDecode(userData);
+    data['name'] = name;
+    if (profilePicture != null) data['profile_picture'] = profilePicture;
+    await prefs.setString('user_data', jsonEncode(data));
+    await loadUser();
+  }
 
   Future<bool> login() async {
     isLoading = true;
