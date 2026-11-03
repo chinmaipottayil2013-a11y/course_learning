@@ -26,6 +26,7 @@ class ListWid extends StatelessWidget {
     final bool isAdded = courseModel.isCartAdded;
     final bool isFavourite = courseModel.isFavourite;
     final String currency = regionSelectionModel?.currency ?? 'INR';
+    final bool isPurchased = courseModel.isPurchased;
 
     return Container(
       padding: const EdgeInsets.all(8),
@@ -80,11 +81,11 @@ class ListWid extends StatelessWidget {
 
           Row(
             children: [
-              const Icon(Icons.access_time_sharp, size: 15),
+              const Icon(Icons.access_time_sharp, size: 12),
               const SizedBox(width: 2),
               Text(
                 '${courseModel.totalHour} hr',
-                style: const TextStyle(color: Colors.black54, fontSize: 13),
+                style: const TextStyle(color: Colors.black54, fontSize: 12),
               ),
             ],
           ),
@@ -146,7 +147,6 @@ class ListWid extends StatelessWidget {
 
           const Spacer(),
 
-          // Add and Favourite buttons
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -154,7 +154,9 @@ class ListWid extends StatelessWidget {
                 child: SizedBox(
                   height: 34,
                   child: ElevatedButton.icon(
-                    onPressed: isAdded
+                    onPressed: isPurchased
+                        ? null
+                        : isAdded
                         ? null
                         : () => context.read<CartProvider>().addToCart(
                             courseId: courseModel.id,
@@ -163,13 +165,19 @@ class ListWid extends StatelessWidget {
                             currency: currency,
                           ),
                     icon: Icon(
-                      isAdded
+                      isPurchased
+                          ? Icons.my_library_books_outlined
+                          : isAdded
                           ? Icons.check_circle_rounded
                           : Icons.add_shopping_cart_rounded,
-                      size: 13,
+                      size: 14,
                     ),
                     label: Text(
-                      isAdded ? 'Added' : 'Add',
+                      isPurchased
+                          ? 'Go to course'
+                          : isAdded
+                          ? 'Added'
+                          : 'Add',
                       style: const TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
@@ -182,15 +190,15 @@ class ListWid extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 10),
                       backgroundColor: ColorsConstants.primary,
                       foregroundColor: Colors.white,
-                      disabledBackgroundColor: const Color(0xFFE8F7EE),
-                      disabledForegroundColor: const Color(0xFF16834A),
+                      disabledBackgroundColor: isPurchased
+                          ? Colors.yellow.shade300
+                          : const Color(0xFFE8F7EE),
+                      disabledForegroundColor: isPurchased
+                          ? Colors.brown
+                          : const Color(0xFF16834A),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18),
-                        side: BorderSide(
-                          color: isAdded
-                              ? const Color(0xFFC5EBD3)
-                              : Colors.transparent,
-                        ),
+                        side: BorderSide(color: Colors.transparent),
                       ),
                     ),
                   ),

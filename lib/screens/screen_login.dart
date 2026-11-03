@@ -52,6 +52,8 @@ class ScreenLogin extends StatelessWidget {
               ),
               SizedBox(height: 20),
               TextField(
+                style: TextStyle(fontSize: 14),
+
                 controller: authProvider.emailController,
                 decoration: decoration.copyWith(
                   hintText: 'Enter your email',
@@ -60,6 +62,7 @@ class ScreenLogin extends StatelessWidget {
               ),
               SizedBox(height: 20),
               TextField(
+                style: TextStyle(fontSize: 14),
                 controller: authProvider.passwordController,
                 obscureText: authProvider.isObscure,
                 decoration: decoration.copyWith(
@@ -141,7 +144,7 @@ class ScreenLogin extends StatelessWidget {
                           child: CircularProgressIndicator(),
                         ),
                       )
-                    : Text('Sign In', style: TextStyle(fontSize: 16)),
+                    : Text('Sign In', style: TextStyle(fontSize: 14)),
               ),
               SizedBox(height: 10),
             ],

@@ -28,4 +28,15 @@ class LastViewedLectureModel {
       videoUrl: json['video_url'],
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'types': types,
+      'order_by': orderBy,
+      'title_name': titleName,
+      'created_at': createdAt,
+      'video_url': videoUrl,
+    };
+  }
 }

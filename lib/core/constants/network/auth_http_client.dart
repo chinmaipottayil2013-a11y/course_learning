@@ -16,9 +16,12 @@ class ApiClient extends http.BaseClient {
   bool _isRefreshing = false;
   Completer<bool>? _refreshCompleter;
 
-  ApiClient._internal({http.Client? client, AuthenticationService? authenticationService})
-      : _client = client ?? http.Client(),
-        _authenticationService = authenticationService ?? AuthenticationService();
+  ApiClient._internal({
+    http.Client? client,
+    AuthenticationService? authenticationService,
+  }) : _client = client ?? http.Client(),
+       _authenticationService =
+           authenticationService ?? AuthenticationService();
 
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
@@ -60,6 +63,8 @@ class ApiClient extends http.BaseClient {
     }
 
     log('Token refreshed successfully. Retrying original request...');
+
+    if (request is! http.Request) return response;
 
     // Get newly saved access token
     final newAccessToken = StringConstants.accessToken.isNotEmpty

@@ -64,8 +64,9 @@ class AuthenticationService {
       }
       log('Refreshing token using: ${ApiConstants.refreshUrl}');
 
-      final requestModel =
-          TokenRefreshRequestModel(refresh: currentRefreshToken);
+      final requestModel = TokenRefreshRequestModel(
+        refresh: currentRefreshToken,
+      );
       final response = await http.post(
         Uri.parse(ApiConstants.refreshUrl),
         headers: {
@@ -91,9 +92,9 @@ class AuthenticationService {
 
         final newRefreshToken =
             (refreshResponse.refresh != null &&
-                    refreshResponse.refresh!.isNotEmpty)
-                ? refreshResponse.refresh!
-                : currentRefreshToken;
+                refreshResponse.refresh!.isNotEmpty)
+            ? refreshResponse.refresh!
+            : currentRefreshToken;
 
         await _saveTokens(refreshResponse.access, newRefreshToken);
         log('Token refreshed and saved successfully');

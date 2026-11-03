@@ -7,8 +7,10 @@ import 'package:learning_course2/providers/cart_provider.dart';
 import 'package:learning_course2/providers/course_details_provider.dart';
 
 import 'package:learning_course2/core/navigation/navigation_service.dart';
+import 'package:learning_course2/providers/enrolled_course_provider.dart';
 import 'package:learning_course2/providers/favourite_screen_provider.dart';
 import 'package:learning_course2/providers/homescreen_provider.dart';
+import 'package:learning_course2/providers/profile_screen_provider.dart';
 import 'package:learning_course2/providers/razorpay_provider.dart';
 import 'package:learning_course2/screens/screen_splash.dart';
 
@@ -27,6 +29,8 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => CartProvider()),
         ChangeNotifierProvider(create: (_) => FavouriteScreenProvider()),
         ChangeNotifierProvider(create: (_) => RazorpayProvider()),
+        ChangeNotifierProvider(create: (_) => EnrolledCourseProvider()),
+        ChangeNotifierProvider(create: (_) => ProfileScreenProvider()),
       ],
       child: MyApp(),
     ),
