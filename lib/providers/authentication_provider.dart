@@ -53,6 +53,7 @@ class AuthenticationProvider extends ChangeNotifier {
   }) async {
     final prefs = await SharedPreferences.getInstance();
     final userData = prefs.getString('user_data');
+    await loadUser();
     if (userData == null) return;
 
     final Map<String, dynamic> data = jsonDecode(userData);

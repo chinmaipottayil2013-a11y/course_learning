@@ -129,8 +129,9 @@ class ScreenProfileUpdate extends StatelessWidget {
     final provider = context.watch<ProfileScreenProvider>();
     final isLoading = provider.isLoading;
 
-    final auth = context.watch<AuthenticationProvider>();
-    final user = auth.model?.userData;
+    final profileImage = provider.userProfileModel?.profilePicture;
+
+    final hasProfileImage = profileImage != null && profileImage.isNotEmpty;
     return Scaffold(
       backgroundColor: ColorsConstants.background,
       appBar: AppBar(
@@ -156,11 +157,10 @@ class ScreenProfileUpdate extends StatelessWidget {
                       backgroundColor: Colors.grey.shade200,
                       backgroundImage: provider.image != null
                           ? FileImage(provider.image!)
-                          : (user?.profilePicture != null &&
-                                user!.profilePicture!.isNotEmpty)
-                          ? NetworkImage(user.profilePicture!)
+                          : hasProfileImage
+                          ? NetworkImage(profileImage) as ImageProvider
                           : null,
-                      child: provider.image == null
+                      child: provider.image == null && !hasProfileImage
                           ? Icon(
                               Icons.person,
                               size: 50,

@@ -15,9 +15,33 @@ class ProfileScreenProvider extends ChangeNotifier {
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
 
+  UserProfileModel? userProfileModel;
+
   File? image;
   bool isLoading = false;
   String? errorMessage;
+
+  Future<void> getProfile() async {
+    isLoading = true;
+    errorMessage = null;
+    notifyListeners();
+
+    try {
+      userProfileModel = await _profileUpdateService.getProfileData();
+
+      final nameParts = userProfileModel!.name.trim().split(RegExp(r'\s+'));
+      firstNameController.text = nameParts.first;
+      lastNameController.text = nameParts.length > 1
+          ? nameParts.sublist(1).join('')
+          : '';
+    } catch (e, stack) {
+      log('Failed to fetch profile data : $e', stackTrace: stack);
+      errorMessage = 'Could not load profile';
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
 
   Future<void> pickImage(ImageSource source) async {
     try {
@@ -64,10 +88,17 @@ class ProfileScreenProvider extends ChangeNotifier {
         image: image,
         name: name,
       );
+      userProfileModel = result;
+      if (result == null) {
+        errorMessage = 'Server returned no profile';
+        return null;
+      }
+
       await auth.updatedUser(
-        name: result!.name,
+        name: result.name,
         profilePicture: result.profilePicture,
       );
+      image = null;
       return result;
     } catch (e, stackTrace) {
       log('Profile update failed: $e', stackTrace: stackTrace);

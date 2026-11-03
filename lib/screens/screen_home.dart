@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:flutter/cupertino.dart' show CupertinoSliverRefreshControl;
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:learning_course2/core/constants/colors_constants.dart';
@@ -35,8 +36,12 @@ class _HomescreenState extends State<ScreenHome> {
 
     final homeProvider = context.read<HomescreenProvider>();
 
-    if (_controller.position.pixels >
-        _controller.position.maxScrollExtent - 300) {
+    // Bouncing physics fires this on every frame of an overscroll,
+    // so never start a second load while one is running
+    if (homeProvider.isLoading || homeProvider.isLoadingMore) return;
+
+    // extentAfter = distance left below the viewport (0 when overscrolling)
+    if (_controller.position.extentAfter < 300) {
       homeProvider.loadMoreCourses(context: context);
     }
   }
@@ -83,7 +88,7 @@ class _HomescreenState extends State<ScreenHome> {
               value: selectedRegion?.id,
               hint: Text(
                 selectedRegion?.name ?? 'Select Country',
-                style: TextStyle(fontSize: 13, color: Colors.black45),
+                style: const TextStyle(fontSize: 13, color: Colors.black45),
               ),
               borderRadius: BorderRadius.circular(16),
               icon: const Icon(
@@ -391,225 +396,242 @@ class _HomescreenState extends State<ScreenHome> {
               .where((r) => r.id == homeScreenProvider.selectedRegionId)
               .firstOrNull;
 
-          return RefreshIndicator(
-            color: ColorsConstants.primary,
-            backgroundColor: Colors.white,
-            onRefresh: () async {
-              await homeScreenProvider.refreshProducts(context: context);
-            },
-            child: SingleChildScrollView(
-              controller: _controller,
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(18, 18, 18, 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+          return CustomScrollView(
+            // Controller must be on the CustomScrollView for load-more to work
+            controller: _controller,
+            physics: const AlwaysScrollableScrollPhysics(
+              parent: BouncingScrollPhysics(),
+            ),
+            slivers: [
+              // Spinner sits above the content and pushes it down
+              CupertinoSliverRefreshControl(
+                onRefresh: () async {
+                  // Same method your old RefreshIndicator used
+                  await homeScreenProvider.refreshProducts(context: context);
+                },
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(18, 18, 18, 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: Container(
-                          height: 54,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(18),
-                            border: Border.all(color: const Color(0xFFE9EBF2)),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Color(0x08000000),
-                                blurRadius: 14,
-                                offset: Offset(0, 4),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              height: 54,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(18),
+                                border: Border.all(
+                                  color: const Color(0xFFE9EBF2),
+                                ),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Color(0x08000000),
+                                    blurRadius: 14,
+                                    offset: Offset(0, 4),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                          child: TextField(
-                            controller:
-                                homeScreenProvider.textEditingController,
-                            onSubmitted: (value) {
-                              homeScreenProvider.getCourses(context: context);
-                            },
-                            style: const TextStyle(
-                              fontSize: 13,
-                              color: ColorsConstants.textColor,
-                            ),
-                            decoration: InputDecoration(
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 18,
-                                vertical: 16,
-                              ),
-                              suffixIcon: IconButton(
-                                onPressed: () async {
-                                  await homeScreenProvider.getCourses(
+                              child: TextField(
+                                controller:
+                                    homeScreenProvider.textEditingController,
+                                onSubmitted: (value) {
+                                  homeScreenProvider.getCourses(
                                     context: context,
                                   );
                                 },
-                                icon: const Icon(
-                                  Icons.search_rounded,
-                                  size: 23,
-                                  color: ColorsConstants.primary,
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  color: ColorsConstants.textColor,
+                                ),
+                                decoration: InputDecoration(
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 18,
+                                    vertical: 16,
+                                  ),
+                                  suffixIcon: IconButton(
+                                    onPressed: () async {
+                                      await homeScreenProvider.getCourses(
+                                        context: context,
+                                      );
+                                    },
+                                    icon: const Icon(
+                                      Icons.search_rounded,
+                                      size: 23,
+                                      color: ColorsConstants.primary,
+                                    ),
+                                  ),
+                                  hintText: 'Search your course...',
+                                  hintStyle: const TextStyle(
+                                    color: ColorsConstants.secondaryText,
+                                    fontSize: 13,
+                                  ),
+                                  border: InputBorder.none,
+                                  enabledBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
                                 ),
                               ),
-                              hintText: 'Search your course...',
-                              hintStyle: const TextStyle(
-                                color: ColorsConstants.secondaryText,
-                                fontSize: 13,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Container(
+                            height: 54,
+                            width: 54,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(18),
+                              color: Colors.white,
+                              border: Border.all(
+                                color: const Color(0xFFE9EBF2),
                               ),
-                              border: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none,
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color(0x08000000),
+                                  blurRadius: 14,
+                                  offset: Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: IconButton(
+                              onPressed: () {
+                                _openBottomSheet(context);
+                              },
+                              icon: const Icon(
+                                Icons.tune_rounded,
+                                size: 22,
+                                color: ColorsConstants.textColor,
+                              ),
                             ),
                           ),
-                        ),
+                        ],
                       ),
-                      const SizedBox(width: 12),
-                      Container(
-                        height: 54,
-                        width: 54,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(18),
-                          color: Colors.white,
-                          border: Border.all(color: const Color(0xFFE9EBF2)),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Color(0x08000000),
-                              blurRadius: 14,
-                              offset: Offset(0, 4),
+
+                      const SizedBox(height: 20),
+
+                      buildCountryDropDown(),
+
+                      const SizedBox(height: 24),
+
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Available Courses',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 18,
+                              color: ColorsConstants.textColor,
+                              letterSpacing: -0.4,
                             ),
-                          ],
-                        ),
-                        child: IconButton(
-                          onPressed: () {
-                            _openBottomSheet(context);
-                          },
-                          icon: const Icon(
-                            Icons.tune_rounded,
-                            size: 22,
-                            color: ColorsConstants.textColor,
                           ),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  buildCountryDropDown(),
-
-                  const SizedBox(height: 24),
-
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Available Courses',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 18,
-                          color: ColorsConstants.textColor,
-                          letterSpacing: -0.4,
-                        ),
-                      ),
-                      const Spacer(),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 11,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: ColorsConstants.containerColor,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          '${homeScreenProvider.courseResponseModel?.count ?? 0} Courses',
-                          style: const TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: ColorsConstants.primary,
+                          const Spacer(),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 11,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: ColorsConstants.containerColor,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              '${homeScreenProvider.courseResponseModel?.count ?? 0} Courses',
+                              style: const TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: ColorsConstants.primary,
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                    ],
-                  ),
 
-                  const SizedBox(height: 14),
+                      const SizedBox(height: 14),
 
-                  if (homeScreenProvider.isLoading)
-                    const CourseSkeletonGrid()
-                  else if (homeScreenProvider.errorMessage != null)
-                    Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Text(
-                          'ISSUE IN HOME SCREEN '
-                          '${homeScreenProvider.errorMessage!}',
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: Colors.redAccent,
-                            fontSize: 14,
+                      if (homeScreenProvider.isLoading)
+                        const CourseSkeletonGrid()
+                      else if (homeScreenProvider.errorMessage != null)
+                        Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: Text(
+                              'ISSUE IN HOME SCREEN '
+                              '${homeScreenProvider.errorMessage!}',
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                color: Colors.redAccent,
+                                fontSize: 14,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    )
-                  else if (homeScreenProvider.courseModel.isEmpty)
-                    const Center(
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 60),
-                        child: Text(
-                          'No courses found',
-                          style: TextStyle(
-                            color: ColorsConstants.secondaryText,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
+                        )
+                      else if (homeScreenProvider.courseModel.isEmpty)
+                        const Center(
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 60),
+                            child: Text(
+                              'No courses found',
+                              style: TextStyle(
+                                color: ColorsConstants.secondaryText,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    )
-                  else
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: homeScreenProvider.courseModel.length,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            mainAxisSpacing: 12,
-                            crossAxisSpacing: 12,
-                            childAspectRatio: 0.72,
-                            mainAxisExtent: 300,
-                          ),
-                      itemBuilder: (context, index) {
-                        final course = homeScreenProvider.courseModel[index];
+                        )
+                      else
+                        GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: homeScreenProvider.courseModel.length,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                mainAxisSpacing: 12,
+                                crossAxisSpacing: 12,
+                                childAspectRatio: 0.72,
+                                mainAxisExtent: 300,
+                              ),
+                          itemBuilder: (context, index) {
+                            final course =
+                                homeScreenProvider.courseModel[index];
 
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    ScreenCourseDetails(slug: course.slug),
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        ScreenCourseDetails(slug: course.slug),
+                                  ),
+                                );
+                              },
+                              child: ListWid(
+                                courseModel: course,
+                                region:
+                                    homeScreenProvider.selectedRegionId ?? 3,
+                                regionSelectionModel: selectedRegion,
                               ),
                             );
                           },
-                          child: ListWid(
-                            courseModel: course,
-                            region: homeScreenProvider.selectedRegionId ?? 3,
-                            regionSelectionModel: selectedRegion,
-                          ),
-                        );
-                      },
-                    ),
-                  if (homeScreenProvider.isLoadingMore)
-                    (Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Center(
-                        child: SpinKitThreeBounce(
-                          color: Colors.blue.shade900,
-                          size: 20,
                         ),
-                      ),
-                    )),
-                ],
+                      if (homeScreenProvider.isLoadingMore)
+                        Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Center(
+                            child: SpinKitThreeBounce(
+                              color: Colors.blue.shade900,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
               ),
-            ),
+            ],
           );
         },
       ),
