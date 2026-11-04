@@ -5,7 +5,9 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:learning_course2/core/constants/colors_constants.dart';
 import 'package:learning_course2/providers/authentication_provider.dart';
 import 'package:learning_course2/providers/homescreen_provider.dart';
+import 'package:learning_course2/providers/notification_provider.dart';
 import 'package:learning_course2/reusables/course_list_widget.dart';
+import 'package:learning_course2/reusables/notification_widget.dart';
 import 'package:learning_course2/reusables/skeleton_grid.dart';
 import 'package:learning_course2/screens/screen_login.dart';
 import 'package:learning_course2/screens/screen_course_details.dart';
@@ -21,11 +23,14 @@ class ScreenHome extends StatefulWidget {
 class _HomescreenState extends State<ScreenHome> {
   final ScrollController _controller = ScrollController();
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   void getDatas() async {
     await Future.wait([
       context.read<HomescreenProvider>().getCourses(context: context),
       context.read<HomescreenProvider>().getFilters(),
       context.read<HomescreenProvider>().getRegions(),
+      context.read<NotificationProvider>().getNotifications(),
     ]);
   }
 
@@ -36,11 +41,8 @@ class _HomescreenState extends State<ScreenHome> {
 
     final homeProvider = context.read<HomescreenProvider>();
 
-    // Bouncing physics fires this on every frame of an overscroll,
-    // so never start a second load while one is running
     if (homeProvider.isLoading || homeProvider.isLoadingMore) return;
 
-    // extentAfter = distance left below the viewport (0 when overscrolling)
     if (_controller.position.extentAfter < 300) {
       homeProvider.loadMoreCourses(context: context);
     }
@@ -58,11 +60,9 @@ class _HomescreenState extends State<ScreenHome> {
     );
   }
 
-  // Country dropdown widget
   Widget buildCountryDropDown() {
     return Consumer<HomescreenProvider>(
       builder: (context, provider, child) {
-        // Selected region (null if the id matches nothing)
         final selectedRegion = provider.regionSelectionModel
             .where((region) => region.id == provider.selectedRegionId)
             .firstOrNull;
@@ -120,7 +120,6 @@ class _HomescreenState extends State<ScreenHome> {
     );
   }
 
-  // Filter chips widget
   Widget buildFilterChips({
     required String heading,
     required List<dynamic> items,
@@ -177,7 +176,6 @@ class _HomescreenState extends State<ScreenHome> {
     );
   }
 
-  // Filters bottom sheet
   void _openBottomSheet(BuildContext context) {
     showModalBottomSheet(
       backgroundColor: const Color(0xFFFCFCFF),
@@ -374,14 +372,150 @@ class _HomescreenState extends State<ScreenHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: ColorsConstants.background,
+      endDrawer: Drawer(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(),
+        child: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      'Notifications',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: ColorsConstants.textColor,
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Consumer<NotificationProvider>(
+                      builder: (context, value, child) => Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: ColorsConstants.containerColor,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          '${value.unread} unread',
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: ColorsConstants.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 6),
+                const Divider(thickness: 0.5, endIndent: 0, indent: 0),
+
+                Expanded(
+                  child: Consumer<NotificationProvider>(
+                    builder: (context, notificationProvider, child) {
+                      if (notificationProvider.isLoading) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                      if (notificationProvider.errorMessage != null) {
+                        return Center(
+                          child: Text(notificationProvider.errorMessage!),
+                        );
+                      }
+                      if (notificationProvider.notificationsList.isEmpty) {
+                        return Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.notifications_off, size: 35),
+                              SizedBox(height: 10),
+                              Text('No Notifications'),
+                            ],
+                          ),
+                        );
+                      }
+                      return NotificationListener<ScrollNotification>(
+                        onNotification: (notification) {
+                          if (notification.metrics.pixels >=
+                              notification.metrics.maxScrollExtent - 200) {
+                            notificationProvider.loadMoreNotifications();
+                          }
+                          return false;
+                        },
+                        child: ListView.separated(
+                          separatorBuilder: (context, index) =>
+                              const Divider(color: Colors.black12),
+                          itemCount:
+                              notificationProvider.notificationsList.length +
+                              (notificationProvider.isLoadingMore ? 1 : 0),
+                          itemBuilder: (context, index) {
+                            if (index ==
+                                notificationProvider.notificationsList.length) {
+                              return const Padding(
+                                padding: EdgeInsets.all(10),
+                                child: Center(
+                                  child: SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                ),
+                              );
+                            }
+                            final notification =
+                                notificationProvider.notificationsList[index];
+                            return NotificationWidget(
+                              notificationModel: notification,
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
       appBar: AppBar(
+        automaticallyImplyActions: false,
+        actions: [
+          IconButton(
+            onPressed: () {
+              _scaffoldKey.currentState?.openEndDrawer();
+            },
+            icon: Container(
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+
+              decoration: BoxDecoration(
+                color: ColorsConstants.containerColor,
+                borderRadius: BorderRadius.circular(25),
+              ),
+              child: Icon(
+                Icons.notifications,
+                color: ColorsConstants.primary,
+                size: 20,
+              ),
+            ),
+          ),
+        ],
+        actionsPadding: EdgeInsets.only(right: 15),
         scrolledUnderElevation: 0,
         elevation: 0,
         backgroundColor: ColorsConstants.background,
-        centerTitle: true,
+        titleSpacing: 25,
         title: const Text(
           'Course Learning',
+
           style: TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 22,
@@ -397,16 +531,13 @@ class _HomescreenState extends State<ScreenHome> {
               .firstOrNull;
 
           return CustomScrollView(
-            // Controller must be on the CustomScrollView for load-more to work
             controller: _controller,
             physics: const AlwaysScrollableScrollPhysics(
               parent: BouncingScrollPhysics(),
             ),
             slivers: [
-              // Spinner sits above the content and pushes it down
               CupertinoSliverRefreshControl(
                 onRefresh: () async {
-                  // Same method your old RefreshIndicator used
                   await homeScreenProvider.refreshProducts(context: context);
                 },
               ),

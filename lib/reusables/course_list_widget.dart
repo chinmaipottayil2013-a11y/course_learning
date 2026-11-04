@@ -110,7 +110,7 @@ class ListWid extends StatelessWidget {
 
           const SizedBox(height: 6),
 
-          const Divider(thickness: 0.8, indent: 8, endIndent: 8),
+          const Divider(thickness: 0.3, indent: 8, endIndent: 8),
 
           const SizedBox(height: 3),
 

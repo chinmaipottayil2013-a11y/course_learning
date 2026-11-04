@@ -49,8 +49,8 @@ class AuthenticationService {
       }
 
       return null;
-    } catch (e) {
-      log('Network Error: $e');
+    } catch (e, st) {
+      log('Network Error: $e', stackTrace: st);
       return null;
     }
   }

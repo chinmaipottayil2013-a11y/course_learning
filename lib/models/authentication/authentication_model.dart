@@ -98,7 +98,7 @@ class UserData {
   final String? certificateName;
   final bool certificateNameLocked;
   final String? state;
-  final String? region;
+  // final int? region;
   final List<dynamic> groups;
   final List<dynamic> userPermissions;
   final List<dynamic> operatingCategories;
@@ -181,7 +181,7 @@ class UserData {
     this.certificateName,
     required this.certificateNameLocked,
     this.state,
-    this.region,
+    // this.region,
     required this.groups,
     required this.userPermissions,
     required this.operatingCategories,
@@ -268,7 +268,7 @@ class UserData {
       certificateName: json['certificate_name'],
       certificateNameLocked: json['certificate_name_locked'] ?? false,
       state: json['state'],
-      region: json['region'],
+      // region: (json['region'] as num?)?.toInt(),
       groups: json['groups'] ?? [],
       userPermissions: json['user_permissions'] ?? [],
       operatingCategories: json['operating_categories'] ?? [],
