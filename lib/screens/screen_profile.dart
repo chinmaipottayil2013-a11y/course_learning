@@ -27,30 +27,35 @@ class _ScreenProfileState extends State<ScreenProfile> {
       'subtitle': 'Track daily progress, XP multipliers & shields',
       'icon': Icons.local_fire_department,
       'color': Colors.red,
+      'screen': null,
     },
     {
       'title': 'Enrolled Courses',
       'subtitle': 'View and resume your active courses',
       'icon': Icons.menu_book,
       'color': Colors.blue,
+      'screen': const ScreenEnrolledCourses(),
     },
     {
       'title': 'Favourite Courses',
       'subtitle': 'Courses saved to your wishlist',
       'icon': Icons.favorite,
       'color': Colors.pink,
+      'screen': const ScreenFavourite(),
     },
     {
       'title': 'My Certificates',
       'subtitle': 'Download and share your earned credentials',
       'icon': Icons.workspace_premium,
       'color': Colors.orange,
+      'screen': null,
     },
     {
       'title': 'Submitted Assignments',
       'subtitle': 'Track grades and instructor feedbacks',
       'icon': Icons.assignment_turned_in,
       'color': Colors.teal,
+      'screen': null,
     },
   ];
 
@@ -69,24 +74,24 @@ class _ScreenProfileState extends State<ScreenProfile> {
     },
   ];
 
-  void navigateToScreen(String title) {
-    switch (title) {
-      case 'Enrolled Courses':
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const ScreenEnrolledCourses(),
-          ),
-        );
-        break;
+  // void navigateToScreen(String title) {
+  //   switch (title) {
+  //     case 'Enrolled Courses':
+  //       Navigator.push(
+  //         context,
+  //         MaterialPageRoute(
+  //           builder: (context) => const ScreenEnrolledCourses(),
+  //         ),
+  //       );
+  //       break;
 
-      case 'Favourite Courses':
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const ScreenFavourite()),
-        );
-    }
-  }
+  //     case 'Favourite Courses':
+  //       Navigator.push(
+  //         context,
+  //         MaterialPageRoute(builder: (context) => const ScreenFavourite()),
+  //       );
+  //   }
+  // }
 
   @override
   void initState() {
@@ -321,6 +326,7 @@ class _ScreenProfileState extends State<ScreenProfile> {
                           tile['subtitle'] as String,
                           tile['icon'] as IconData,
                           tile['color'] as Color,
+                          tile['screen'] as Widget?,
                         );
                       },
                     ),
@@ -372,6 +378,7 @@ class _ScreenProfileState extends State<ScreenProfile> {
                           secondTile['subtitle'] as String,
                           secondTile['icon'] as IconData,
                           secondTile['color'] as Color,
+                          secondTile['screen'] as Widget?,
                         );
                       },
                     ),
@@ -423,43 +430,54 @@ class _ScreenProfileState extends State<ScreenProfile> {
     );
   }
 
-  Widget buildTile(String title, String subtitle, IconData icon, Color color) {
+  Widget buildTile(
+    String title,
+    String subtitle,
+    IconData icon,
+    Color color,
+    Widget? screen,
+  ) {
     return Material(
       color: Colors.transparent,
-      child: InkWell(
-        onTap: () => navigateToScreen(title),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-          child: ListTile(
-            dense: true,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-            minVerticalPadding: 4,
-            minTileHeight: 65,
-            tileColor: Colors.transparent,
-            leading: Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(14),
-                color: color.withValues(alpha: 0.12),
-              ),
-              child: Icon(icon, color: color, size: 22),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+        child: ListTile(
+          onTap: screen == null
+              ? null
+              : () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => screen),
+                  );
+                },
+          dense: true,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+          minVerticalPadding: 4,
+          minTileHeight: 65,
+          tileColor: Colors.transparent,
+          leading: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(14),
+              color: color.withValues(alpha: 0.12),
             ),
-            title: Text(
-              title,
-              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            child: Icon(icon, color: color, size: 22),
+          ),
+          title: Text(
+            title,
+            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+          subtitle: Padding(
+            padding: const EdgeInsets.only(top: 2),
+            child: Text(
+              subtitle,
+              style: const TextStyle(fontSize: 12, color: Colors.black54),
             ),
-            subtitle: Padding(
-              padding: const EdgeInsets.only(top: 2),
-              child: Text(
-                subtitle,
-                style: const TextStyle(fontSize: 12, color: Colors.black54),
-              ),
-            ),
-            trailing: const Icon(
-              Icons.arrow_forward_ios_rounded,
-              size: 14,
-              color: Colors.black38,
-            ),
+          ),
+          trailing: const Icon(
+            Icons.arrow_forward_ios_rounded,
+            size: 14,
+            color: Colors.black38,
           ),
         ),
       ),

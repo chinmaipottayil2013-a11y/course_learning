@@ -22,4 +22,7 @@ class ApiConstants {
   static String get enrolledCourses =>
       '${baseUrl}api/learning/enrolled-courses/';
   static String get profileUpdateUrl => '${baseUrl}api/learning/profile/';
+  static String get notificationsUrl => '${baseUrl}api/learning/notifications/';
+  static String get deleteNotification =>
+      '${baseUrl}api/learning/delete-notification/';
 }
