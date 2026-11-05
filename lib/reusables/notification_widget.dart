@@ -17,7 +17,7 @@ class NotificationWidget extends StatelessWidget {
         ? DateFormat('dd MMM yyyy, hh:mm a').format(dateTime.toLocal())
         : '';
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
       child: Consumer<NotificationProvider>(
         builder: (context, providerNotification, child) => Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -27,7 +27,10 @@ class NotificationWidget extends StatelessWidget {
                 Expanded(
                   child: Text(
                     notificationModel.title,
-                    style: TextStyle(fontWeight: FontWeight.w700),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 15.5,
+                    ),
                   ),
                 ),
                 InkWell(
@@ -77,6 +80,8 @@ class NotificationWidget extends StatelessWidget {
                 color: Colors.black.withValues(alpha: 0.65),
               ),
             ),
+            SizedBox(height: 5),
+            const Divider(color: Colors.black12),
           ],
         ),
       ),

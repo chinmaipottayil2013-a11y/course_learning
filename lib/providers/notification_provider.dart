@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:learning_course2/models/notifciations/notification_model.dart';
 import 'package:learning_course2/models/notifciations/notification_response_model.dart';
@@ -20,6 +22,8 @@ class NotificationProvider extends ChangeNotifier {
 
   int get unread => notificationResponseModel?.unreadCount ?? 0;
 
+  //For Read more button toggling
+
   Map<int, bool> expandesNotifications = {};
   bool isExpanded(int id) {
     return expandesNotifications[id] ?? false;
@@ -41,6 +45,7 @@ class NotificationProvider extends ChangeNotifier {
         page: page,
         pageSize: pageSize,
       );
+      log(response.unreadCount.toString());
       notificationResponseModel = response;
       notificationsList = response.notifications;
 
@@ -102,6 +107,13 @@ class NotificationProvider extends ChangeNotifier {
     } finally {
       isDeleting = false;
       notifyListeners();
+    }
+  }
+
+  Future<void> deleteAll() async {
+    while (notificationsList.isNotEmpty) {
+      final success = await deleteNot(notification: notificationsList.first);
+      if (!success) return;
     }
   }
 }

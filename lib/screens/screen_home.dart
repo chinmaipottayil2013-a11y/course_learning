@@ -5,9 +5,9 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:learning_course2/core/constants/colors_constants.dart';
 import 'package:learning_course2/providers/authentication_provider.dart';
 import 'package:learning_course2/providers/homescreen_provider.dart';
-import 'package:learning_course2/providers/notification_provider.dart';
+
 import 'package:learning_course2/reusables/course_list_widget.dart';
-import 'package:learning_course2/reusables/notification_widget.dart';
+
 import 'package:learning_course2/reusables/skeleton_grid.dart';
 import 'package:learning_course2/screens/screen_login.dart';
 import 'package:learning_course2/screens/screen_course_details.dart';
@@ -30,7 +30,6 @@ class _HomescreenState extends State<ScreenHome> {
       context.read<HomescreenProvider>().getCourses(context: context),
       context.read<HomescreenProvider>().getFilters(),
       context.read<HomescreenProvider>().getRegions(),
-      context.read<NotificationProvider>().getNotifications(),
     ]);
   }
 
@@ -374,141 +373,141 @@ class _HomescreenState extends State<ScreenHome> {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: ColorsConstants.background,
-      endDrawer: Drawer(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(),
-        child: SafeArea(
-          child: Padding(
-            padding: EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      'Notifications',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: ColorsConstants.textColor,
-                      ),
-                    ),
-                    SizedBox(width: 8),
-                    Consumer<NotificationProvider>(
-                      builder: (context, value, child) => Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 5,
-                        ),
-                        decoration: BoxDecoration(
-                          color: ColorsConstants.containerColor,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          '${value.unread} unread',
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: ColorsConstants.primary,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 6),
-                const Divider(thickness: 0.5, endIndent: 0, indent: 0),
+      // endDrawer: Drawer(
+      //   backgroundColor: Colors.white,
+      //   shape: RoundedRectangleBorder(),
+      //   child: SafeArea(
+      //     child: Padding(
+      //       padding: EdgeInsets.all(20),
+      //       child: Column(
+      //         crossAxisAlignment: CrossAxisAlignment.start,
+      //         children: [
+      //           Row(
+      //             children: [
+      //               Text(
+      //                 'Notifications',
+      //                 style: TextStyle(
+      //                   fontSize: 16,
+      //                   fontWeight: FontWeight.w700,
+      //                   color: ColorsConstants.textColor,
+      //                 ),
+      //               ),
+      //               SizedBox(width: 8),
+      //               Consumer<NotificationProvider>(
+      //                 builder: (context, value, child) => Container(
+      //                   padding: EdgeInsets.symmetric(
+      //                     horizontal: 6,
+      //                     vertical: 5,
+      //                   ),
+      //                   decoration: BoxDecoration(
+      //                     color: ColorsConstants.containerColor,
+      //                     borderRadius: BorderRadius.circular(20),
+      //                   ),
+      //                   child: Text(
+      //                     '${value.unread} unread',
+      //                     style: TextStyle(
+      //                       fontSize: 10,
+      //                       color: ColorsConstants.primary,
+      //                       fontWeight: FontWeight.bold,
+      //                     ),
+      //                   ),
+      //                 ),
+      //               ),
+      //             ],
+      //           ),
+      //           SizedBox(height: 6),
+      //           const Divider(thickness: 0.5, endIndent: 0, indent: 0),
 
-                Expanded(
-                  child: Consumer<NotificationProvider>(
-                    builder: (context, notificationProvider, child) {
-                      if (notificationProvider.isLoading) {
-                        return Center(child: CircularProgressIndicator());
-                      }
-                      if (notificationProvider.errorMessage != null) {
-                        return Center(
-                          child: Text(notificationProvider.errorMessage!),
-                        );
-                      }
-                      if (notificationProvider.notificationsList.isEmpty) {
-                        return Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.notifications_off, size: 35),
-                              SizedBox(height: 10),
-                              Text('No Notifications'),
-                            ],
-                          ),
-                        );
-                      }
-                      return NotificationListener<ScrollNotification>(
-                        onNotification: (notification) {
-                          if (notification.metrics.pixels >=
-                              notification.metrics.maxScrollExtent - 200) {
-                            notificationProvider.loadMoreNotifications();
-                          }
-                          return false;
-                        },
-                        child: ListView.separated(
-                          separatorBuilder: (context, index) =>
-                              const Divider(color: Colors.black12),
-                          itemCount:
-                              notificationProvider.notificationsList.length +
-                              (notificationProvider.isLoadingMore ? 1 : 0),
-                          itemBuilder: (context, index) {
-                            if (index ==
-                                notificationProvider.notificationsList.length) {
-                              return const Padding(
-                                padding: EdgeInsets.all(10),
-                                child: Center(
-                                  child: SizedBox(
-                                    height: 20,
-                                    width: 20,
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                ),
-                              );
-                            }
-                            final notification =
-                                notificationProvider.notificationsList[index];
-                            return NotificationWidget(
-                              notificationModel: notification,
-                            );
-                          },
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+      //           Expanded(
+      //             child: Consumer<NotificationProvider>(
+      //               builder: (context, notificationProvider, child) {
+      //                 if (notificationProvider.isLoading) {
+      //                   return Center(child: CircularProgressIndicator());
+      //                 }
+      //                 if (notificationProvider.errorMessage != null) {
+      //                   return Center(
+      //                     child: Text(notificationProvider.errorMessage!),
+      //                   );
+      //                 }
+      //                 if (notificationProvider.notificationsList.isEmpty) {
+      //                   return Center(
+      //                     child: Column(
+      //                       mainAxisSize: MainAxisSize.min,
+      //                       children: [
+      //                         Icon(Icons.notifications_off, size: 35),
+      //                         SizedBox(height: 10),
+      //                         Text('No Notifications'),
+      //                       ],
+      //                     ),
+      //                   );
+      //                 }
+      //                 return NotificationListener<ScrollNotification>(
+      //                   onNotification: (notification) {
+      //                     if (notification.metrics.pixels >=
+      //                         notification.metrics.maxScrollExtent - 200) {
+      //                       notificationProvider.loadMoreNotifications();
+      //                     }
+      //                     return false;
+      //                   },
+      //                   child: ListView.separated(
+      //                     separatorBuilder: (context, index) =>
+      //                         const Divider(color: Colors.black12),
+      //                     itemCount:
+      //                         notificationProvider.notificationsList.length +
+      //                         (notificationProvider.isLoadingMore ? 1 : 0),
+      //                     itemBuilder: (context, index) {
+      //                       if (index ==
+      //                           notificationProvider.notificationsList.length) {
+      //                         return const Padding(
+      //                           padding: EdgeInsets.all(10),
+      //                           child: Center(
+      //                             child: SizedBox(
+      //                               height: 20,
+      //                               width: 20,
+      //                               child: CircularProgressIndicator(),
+      //                             ),
+      //                           ),
+      //                         );
+      //                       }
+      //                       final notification =
+      //                           notificationProvider.notificationsList[index];
+      //                       return NotificationWidget(
+      //                         notificationModel: notification,
+      //                       );
+      //                     },
+      //                   ),
+      //                 );
+      //               },
+      //             ),
+      //           ),
+      //         ],
+      //       ),
+      //     ),
+      //   ),
+      // ),
       appBar: AppBar(
-        automaticallyImplyActions: false,
-        actions: [
-          IconButton(
-            onPressed: () {
-              _scaffoldKey.currentState?.openEndDrawer();
-            },
-            icon: Container(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        // automaticallyImplyActions: false,
+        // actions: [
+        //   IconButton(
+        //     onPressed: () {
+        //       _scaffoldKey.currentState?.openEndDrawer();
+        //     },
+        //     icon: Container(
+        //       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
 
-              decoration: BoxDecoration(
-                color: ColorsConstants.containerColor,
-                borderRadius: BorderRadius.circular(25),
-              ),
-              child: Icon(
-                Icons.notifications,
-                color: ColorsConstants.primary,
-                size: 20,
-              ),
-            ),
-          ),
-        ],
-        actionsPadding: EdgeInsets.only(right: 15),
+        //       decoration: BoxDecoration(
+        //         color: ColorsConstants.containerColor,
+        //         borderRadius: BorderRadius.circular(25),
+        //       ),
+        //       child: Icon(
+        //         Icons.notifications,
+        //         color: ColorsConstants.primary,
+        //         size: 20,
+        //       ),
+        //     ),
+        //   ),
+        // ],
+        // actionsPadding: EdgeInsets.only(right: 15),
         scrolledUnderElevation: 0,
         elevation: 0,
         backgroundColor: ColorsConstants.background,
