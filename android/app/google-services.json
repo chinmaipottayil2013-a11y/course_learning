@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "584377745606",
+    "project_id": "dadisha",
+    "storage_bucket": "dadisha.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:584377745606:android:469046b36afea8e500d7c7",
+        "android_client_info": {
+          "package_name": "com.example.learning_course2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtyaKGWGlFZkmkxZcB9aF8eTvCl7KIXvA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

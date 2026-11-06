@@ -161,7 +161,9 @@ class _ScreenNotifcationsState extends State<ScreenNotifcations> {
                     );
                   }
 
-                  return ListView.builder(
+                  return ListView.separated(
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 5),
                     shrinkWrap: true,
                     itemCount:
                         notificationProvider.notificationsList.length +

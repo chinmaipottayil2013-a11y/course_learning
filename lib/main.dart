@@ -1,6 +1,9 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:learning_course2/firebase_options.dart';
 import 'package:learning_course2/providers/authentication_provider.dart';
 import 'package:learning_course2/providers/bottom_nav_bar_provider.dart';
 import 'package:learning_course2/providers/cart_provider.dart';
@@ -14,12 +17,18 @@ import 'package:learning_course2/providers/notification_provider.dart';
 import 'package:learning_course2/providers/profile_screen_provider.dart';
 import 'package:learning_course2/providers/razorpay_provider.dart';
 import 'package:learning_course2/screens/screen_splash.dart';
+import 'package:learning_course2/services/push_notifications_service.dart';
 
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  FirebaseMessaging.onBackgroundMessage(fireBaseBackgroundHandler);
   await dotenv.load(fileName: '.env');
+
+  await PushNotificationsService.instance.init();
+
   runApp(
     MultiProvider(
       providers: [

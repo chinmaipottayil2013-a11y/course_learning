@@ -3,7 +3,10 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 
 import 'package:learning_course2/core/constants/razorpay_constants.dart';
+import 'package:learning_course2/models/notifciations/notification_model.dart';
 import 'package:learning_course2/models/payments/payment_response_model.dart';
+import 'package:learning_course2/services/push_notifications_service.dart';
+import 'package:learning_course2/services/notification_service.dart';
 import 'package:learning_course2/services/payment_api_service.dart';
 import 'package:learning_course2/services/razorpay_service.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -29,6 +32,9 @@ class PaymentReceipt {
 class RazorpayProvider extends ChangeNotifier {
   late final RazorpayService _razorpayService;
   final PaymentApiService _paymentApiService = PaymentApiService();
+
+  final NotificationService _notificationService = NotificationService();
+  NotificationModel? notificationModel;
   PaymentStatus status = PaymentStatus.idle;
   String? message;
   PaymentReceipt? receipt;
@@ -51,6 +57,7 @@ class RazorpayProvider extends ChangeNotifier {
   void paymentProvider() {
     _razorpayService = RazorpayService(
       onSuccess: (PaymentSuccessResponse response) async {
+        final course = pendingCourse;
         final ok = await _verify!(
           response.orderId ?? '',
           response.paymentId ?? '',
@@ -64,12 +71,30 @@ class RazorpayProvider extends ChangeNotifier {
           receipt = PaymentReceipt(
             paymentId: response.paymentId ?? '-',
             orderId: _paymentResponseModel?.orderId ?? response.orderId ?? '-',
-            courseName: pendingCourse,
+            courseName: course,
             amountInPaisa: ((_paymentResponseModel?.amount ?? 0) * 100).round(),
             paidAt: DateTime.now(),
           );
           status = PaymentStatus.success;
           message = null;
+
+          try {
+            final res = await _notificationService.getNotifications(
+              page: 1,
+              pageSize: 1,
+            );
+            if (res.notifications.isNotEmpty) {
+              notificationModel = res.notifications.first;
+            }
+          } catch (e) {
+            log('Failed to fetch notification: $e');
+          }
+          PushNotificationsService.instance.showLocal(
+            title: notificationModel?.title ?? 'Welcome to Course',
+            body:
+                notificationModel?.description ??
+                'You are now enrolled in $course',
+          );
         } else {
           status = PaymentStatus.failure;
           message = 'Verification failed';
@@ -99,6 +124,7 @@ class RazorpayProvider extends ChangeNotifier {
 
     required Future<bool> Function(String, String, String) verify,
   }) async {
+    log('pay() courseName = "$courseName"');
     _verify = verify;
     pendingCourse = courseName;
     amount = amountInPaisa;
@@ -131,6 +157,7 @@ class RazorpayProvider extends ChangeNotifier {
     status = PaymentStatus.idle;
     message = null;
     receipt = null;
+    notificationModel = null;
 
     notifyListeners();
   }
