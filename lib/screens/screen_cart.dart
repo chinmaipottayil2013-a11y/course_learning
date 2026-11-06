@@ -5,6 +5,7 @@ import 'package:learning_course2/providers/bottom_nav_bar_provider.dart';
 import 'package:learning_course2/providers/cart_provider.dart';
 import 'package:learning_course2/providers/homescreen_provider.dart';
 import 'package:learning_course2/reusables/cart_screen_widget.dart';
+import 'package:learning_course2/screens/screen_bottom_nav.dart';
 
 import 'package:learning_course2/screens/screen_payment.dart';
 import 'package:provider/provider.dart';
@@ -326,10 +327,40 @@ class _ScreenCartState extends State<ScreenCart> {
                         height: 54,
                         child: ElevatedButton(
                           onPressed: canCheckout
-                              ? () {
+                              ? () async {
                                   final courseIds = items
                                       .map((e) => e.course.id)
                                       .toList();
+
+                                  final courseNames = items
+                                      .map((e) => e.course.name)
+                                      .toList();
+                                  final regionId =
+                                      homeProvider.selectedRegionId ?? 3;
+
+                                  if (total <= 0) {
+                                    final success = await context
+                                        .read<CartProvider>()
+                                        .verifyPayment(
+                                          razorpayOrderId: '',
+                                          razorpayPaymentId: 'Free_Enrollement',
+                                          razorpaySignature: '',
+                                          regionId: regionId,
+                                        );
+                                    if (!context.mounted) return;
+
+                                    if (success) {
+                                      Navigator.pushNamedAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const BottomNavBarScreen(),
+                                            )
+                                            as String,
+                                        (route) => false,
+                                      );
+                                    }
+                                  }
 
                                   Navigator.push(
                                     context,
@@ -337,6 +368,7 @@ class _ScreenCartState extends State<ScreenCart> {
                                       builder: (context) => ScreenPayment(
                                         courseIds: courseIds,
                                         total: total,
+                                        courseNames: courseNames,
                                       ),
                                     ),
                                   );

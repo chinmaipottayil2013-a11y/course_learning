@@ -17,7 +17,7 @@ class NotificationWidget extends StatelessWidget {
         ? DateFormat('dd MMM yyyy, hh:mm a').format(dateTime.toLocal())
         : '';
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
       child: Consumer<NotificationProvider>(
         builder: (context, providerNotification, child) => Column(
           crossAxisAlignment: CrossAxisAlignment.start,

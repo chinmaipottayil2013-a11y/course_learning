@@ -11,11 +11,13 @@ import 'package:provider/provider.dart';
 class ScreenPayment extends StatelessWidget {
   final double total;
   final List<dynamic> courseIds;
+  final List<String> courseNames; // NEW: names of the courses being bought
 
   const ScreenPayment({
     super.key,
     required this.total,
     required this.courseIds,
+    required this.courseNames,
   });
 
   @override
@@ -64,6 +66,7 @@ class ScreenPayment extends StatelessWidget {
                   total: total,
                   selectionModel: selectedRegion,
                   courseCount: courseIds.length,
+                  courseNames: courseNames,
                 ),
         ),
       ),
@@ -76,6 +79,7 @@ class _CheckoutView extends StatelessWidget {
   final RazorpayProvider provider;
   final double total;
   final int courseCount;
+  final List<String> courseNames;
 
   const _CheckoutView({
     super.key,
@@ -83,11 +87,17 @@ class _CheckoutView extends StatelessWidget {
     required this.total,
     required this.selectionModel,
     required this.courseCount,
+    required this.courseNames,
   });
 
   @override
   Widget build(BuildContext context) {
     final currency = selectionModel?.currency ?? 'INR';
+
+    // Joined names for Razorpay / receipt / notification; falls back if empty
+    final courseLabel = courseNames.isEmpty
+        ? 'Courses'
+        : courseNames.join(', ');
 
     return Column(
       children: [
@@ -223,6 +233,38 @@ class _CheckoutView extends StatelessWidget {
                           ),
                         ],
                       ),
+
+                      // NEW: list each course name under the summary
+                      if (courseNames.isNotEmpty) ...[
+                        const SizedBox(height: 14),
+                        for (final name in courseNames)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 6),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsets.only(top: 2),
+                                  child: Icon(
+                                    Icons.play_circle_outline_rounded,
+                                    size: 16,
+                                    color: Colors.black45,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    name,
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                      ],
 
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 18),
@@ -392,7 +434,7 @@ class _CheckoutView extends StatelessWidget {
                                     .selectedRegionId ??
                                 3,
                             currency: currency,
-                            courseName: 'Courses',
+                            courseName: courseLabel, // FIXED: was 'Courses'
                             verify: (orderId, paymentId, signature) =>
                                 context.read<CartProvider>().verifyPayment(
                                   razorpayOrderId: orderId,
